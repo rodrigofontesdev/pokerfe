@@ -36,7 +36,7 @@ histórias US01…US11 da spec.
 - [ ] T007 [P] Criar `playwright.config.ts` com um projeto `e2e` (`testDir: "tests/e2e"`, `webServer` iniciando `npm run dev`) e um projeto `smoke` (`testDir: "tests/smoke"`, `baseURL` lido de `SMOKE_BASE_URL`, sem `webServer` quando a variável estiver definida), e fazer `test:e2e` e `test:smoke` rodarem cada um só o seu projeto
 - [ ] T008 [P] Criar `index.html`, `src/client/main.tsx` (renderiza um componente raiz vazio) e `src/client/styles.css` com `@import "tailwindcss";`
 - [ ] T009 [P] Criar `.gitignore` com `node_modules/`, `dist/`, `.wrangler/`, `test-results/`, `playwright-report/` e `.specify/feature.json`
-- [ ] T010 Criar `.github/workflows/deploy.yml`: em `pull_request` e `push` na `main`, rodar `npm ci`, `npm run typecheck`, `npm test`, instalar navegadores do Playwright e `npm run test:e2e`; somente em `push` na `main` e após os testes, rodar `npm run build` e `cloudflare/wrangler-action@v4` com `apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}` e `accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}` (D-03); Node via `.nvmrc`; o passo de smoke test pós-deploy é adicionado em T082
+- [ ] T010 Criar `.github/workflows/deploy.yml`: em `pull_request` e `push` na `main`, rodar `npm ci`, `npm run typecheck`, `npm test`, instalar navegadores do Playwright e `npm run test:e2e`; somente em `push` na `main` e após os testes, rodar `npm run build` e `cloudflare/wrangler-action@v4` com `apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}` e `accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}` (D-03); Node via `.nvmrc`; o passo de smoke test pós-deploy é adicionado em T083
 
 **Checkpoint**: `npm run dev`, `npm run typecheck`, `npm test` e `npm run build` executam sem erro com o app vazio.
 
@@ -86,33 +86,13 @@ histórias US01…US11 da spec.
 - [ ] T030 [US1] Implementar o handler `join` em `src/room/Room.ts` usando T028: valida `displayName` "após remover espaços nas pontas: 1 a 45 caracteres" e `avatarId` da lista de avatares ou `null`, compara o hash do `facilitatorToken`, gera `participant_id` no primeiro `join` e envia `room_state` a todos — [FR-002, FR-004, FR-005, FR-008, FR-021, FR-027]
 - [ ] T031 [P] [US1] Criar `src/client/components/Avatar.tsx` (SVG do `avatarId` ou, sem avatar, a primeira letra do nome como placeholder — FR-005) e `src/client/components/AvatarPicker.tsx` com Base UI e Tailwind, seleção opcional e navegável por teclado — [FR-005]
 - [ ] T032 [US1] Criar a tela `src/client/routes/Home.tsx`: nome da sala (obrigatório, até 250), baralho (story points ou tempo), nome do facilitador (obrigatório, até 45, pré-preenchido via T021) e avatar opcional; valida no cliente antes de chamar `POST /api/rooms` para que nenhuma sala seja criada com campo obrigatório vazio; salva o token por `roomId` e navega para `/r/$roomId` — [FR-001, FR-006, FR-008]
-- [ ] T033 [US1] Criar a tela `src/client/routes/Room.tsx` com cabeçalho (nome da sala) e botão "Copiar link" usando `navigator.clipboard`, entrando automaticamente com o nome, o avatar e o token salvos quando o usuário acabou de criar a sala — [FR-003]
+- [ ] T033 [US1] Criar a tela `src/client/routes/Room.tsx` com cabeçalho (nome da sala) e botão "Copiar link" usando `navigator.clipboard`, exibindo o nome e o avatar (ou o placeholder) do próprio participante a partir de `you` (cenário 1 da US01), entrando automaticamente com o nome, o avatar e o token salvos quando o usuário acabou de criar a sala — [FR-003]
 
 **Checkpoint**: US01 funciona e é testável isoladamente.
 
 ---
 
-## Phase 4: User Story 2 - US02 Entrar na sala pelo link (Priority: P1)
-
-**Goal**: participantes entram pelo link com nome e avatar opcional, sem cadastro.
-
-**Independent Test**: abrir o link em outro navegador, informar nome e ver o participante na lista de todos; link inválido mostra a mensagem de sala não encontrada.
-
-### Tests for User Story 2
-
-- [ ] T034 [P] [US2] Teste de integração em `tests/integration/join-participant.test.ts`: participante novo entra como votante e aparece no `room_state` de todas as conexões; `join` repetido com o mesmo `sessionId` mantém `participantId` e atualiza nome e avatar; `displayName` com 46 caracteres recebe `validation_error`; `sessionId` nunca aparece no `room_state` de outra conexão — [FR-004, FR-008, FR-009]
-- [ ] T035 [P] [US2] Teste e2e em `tests/e2e/join-room.spec.ts` cobrindo os cenários 1 a 4 da US02 — [FR-004, FR-005, FR-006, FR-007]
-
-### Implementation for User Story 2
-
-- [ ] T036 [US2] Criar `src/client/components/JoinForm.tsx` (nome obrigatório até 45 e avatar opcional, pré-preenchidos com os valores lembrados e editáveis — FR-006) e exibi-lo em `src/client/routes/Room.tsx` quando o navegador ainda não entrou na sala — [FR-004, FR-006]
-- [ ] T037 [US2] Criar `src/client/components/RoomNotFound.tsx` com o texto "Sala não encontrada ou expirada" e uma ação que leva para `/`, exibido em `src/client/routes/Room.tsx` quando a conexão fecha com 4404 ou o `roomId` é inválido (FR-007) — [FR-007]
-
-**Checkpoint**: US01 e US02 funcionam juntas e isoladamente.
-
----
-
-## Phase 5: User Story 3 - US03 Ver presença e status de voto (Priority: P1)
+## Phase 4: User Story 3 - US03 Ver presença e status de voto (Priority: P1)
 
 **Goal**: todos veem quem está na sala, papéis e quem já votou, sem o valor do voto.
 
@@ -120,15 +100,35 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 3
 
-- [ ] T038 [P] [US3] Testes unitários em `tests/unit/domain/presence.test.ts` para a visão de participantes (`hasVoted` sem valor, papéis, `connected`) — [FR-009]
-- [ ] T039 [P] [US3] Teste de integração em `tests/integration/presence.test.ts`: `connected` vira `false` quando a última conexão de um `sessionId` fecha e `true` ao voltar; antes da revelação nenhum `room_state` traz o valor de voto de outra pessoa (só `you.myVote`) — [FR-009, FR-020]
+- [ ] T034 [P] [US3] Testes unitários em `tests/unit/domain/presence.test.ts` para a visão de participantes (`hasVoted` sem valor, papéis, `connected`) — [FR-009]
+- [ ] T035 [P] [US3] Teste de integração em `tests/integration/presence.test.ts`: `connected` vira `false` quando a última conexão de um `sessionId` fecha e `true` ao voltar; papéis e `participantId` corretos para todas as conexões — [FR-009, FR-020]
 
 ### Implementation for User Story 3
 
-- [ ] T040 [US3] Implementar em `src/domain/presence.ts` a montagem de `participants` e `you` do `room_state` e, em `src/room/Room.ts`, a atualização de `connected` e `last_seen_at` em `join` e `webSocketClose`, considerando várias conexões do mesmo `sessionId` — [FR-009, FR-020]
-- [ ] T041 [US3] Criar `src/client/components/ParticipantList.tsx` (avatar ou placeholder, nome, papel facilitador/votante/observador, indicador de "votou", estado desconectado) com Tailwind, legível com mais de 10 participantes (FR-024) — [FR-009, FR-024]
+- [ ] T036 [US3] Implementar em `src/domain/presence.ts` a montagem de `participants` e `you` do `room_state` e, em `src/room/Room.ts`, a atualização de `connected` e `last_seen_at` em `join` e `webSocketClose`, considerando várias conexões do mesmo `sessionId` — [FR-009, FR-020]
+- [ ] T037 [US3] Criar `src/client/components/ParticipantList.tsx` (avatar ou placeholder, nome, papel facilitador/votante/observador, indicador de "votou", estado desconectado) com Tailwind, legível com mais de 10 participantes (FR-024) — [FR-009, FR-024]
 
 **Checkpoint**: presença em tempo real visível para todos.
+
+---
+
+## Phase 5: User Story 2 - US02 Entrar na sala pelo link (Priority: P1)
+
+**Goal**: participantes entram pelo link com nome e avatar opcional, sem cadastro.
+
+**Independent Test**: abrir o link em outro navegador, informar nome e ver o participante na lista de todos; link inválido mostra a mensagem de sala não encontrada.
+
+### Tests for User Story 2
+
+- [ ] T038 [P] [US2] Teste de integração em `tests/integration/join-participant.test.ts`: participante novo entra como votante e aparece no `room_state` de todas as conexões; `join` repetido com o mesmo `sessionId` mantém `participantId` e atualiza nome e avatar; `displayName` com 46 caracteres recebe `validation_error`; `sessionId` nunca aparece no `room_state` de outra conexão — [FR-004, FR-008, FR-009]
+- [ ] T039 [P] [US2] Teste e2e em `tests/e2e/join-room.spec.ts` cobrindo os cenários 1 a 4 da US02 — [FR-004, FR-005, FR-006, FR-007]
+
+### Implementation for User Story 2
+
+- [ ] T040 [US2] Criar `src/client/components/JoinForm.tsx` (nome obrigatório até 45 e avatar opcional, pré-preenchidos com os valores lembrados e editáveis — FR-006) e exibi-lo em `src/client/routes/Room.tsx` quando o navegador ainda não entrou na sala — [FR-004, FR-006]
+- [ ] T041 [US2] Criar `src/client/components/RoomNotFound.tsx` com o texto "Sala não encontrada ou expirada" e uma ação que leva para `/`, exibido em `src/client/routes/Room.tsx` quando a conexão fecha com 4404 ou o `roomId` é inválido (FR-007) — [FR-007]
+
+**Checkpoint**: US01 e US02 funcionam juntas e isoladamente.
 
 ---
 
@@ -141,7 +141,7 @@ histórias US01…US11 da spec.
 ### Tests for User Story 5
 
 - [ ] T042 [P] [US5] Testes unitários em `tests/unit/domain/voting.test.ts`: voto aceito só de votante, só em `voting`, só com rótulo do baralho da sala; troca substitui; facilitador e observador recebem recusa — [FR-011, FR-013, FR-015]
-- [ ] T043 [P] [US5] Teste de integração em `tests/integration/vote.test.ts`: `invalid_card`, `forbidden`, `round_not_voting`; voto válido atualiza `last_activity_at` e reagenda o Alarm para agora + 30 dias (FR-023) — [FR-013, FR-015, FR-023]
+- [ ] T043 [P] [US5] Teste de integração em `tests/integration/vote.test.ts`: `invalid_card`, `forbidden`, `round_not_voting`; voto válido atualiza `last_activity_at` e reagenda o Alarm para agora + 30 dias (FR-023); após um voto, o votante aparece com `hasVoted: true` para todas as conexões e nenhum `room_state` traz o valor do voto de outra pessoa antes da revelação, só `you.myVote` (completa o cenário 1 da US03) — [FR-009, FR-013, FR-015, FR-023]
 - [ ] T044 [P] [US5] Teste e2e em `tests/e2e/vote.spec.ts` cobrindo os cenários 1 e 2 da US05 — [FR-011, FR-015]
 
 ### Implementation for User Story 5
@@ -184,7 +184,7 @@ histórias US01…US11 da spec.
 
 - [ ] T052 [P] [US6] Testes unitários em `tests/unit/domain/reveal.test.ts`: `canReveal` falso sem votante conectado; falso com voto faltando; verdadeiro com todos os votantes conectados votando e observadores presentes; votante desconectado não é esperado e o voto que já registrou entra na revelação (FR-020); `missingVotes` correto — [FR-012, FR-020]
 - [ ] T053 [P] [US6] Teste de integração em `tests/integration/reveal.test.ts`: `reveal_blocked`, `forbidden`, `round_not_voting`; revelação enviada a todas as conexões no mesmo broadcast com `votes`; votos bloqueados depois — [FR-012, FR-015, FR-016, FR-021]
-- [ ] T054 [P] [US6] Teste e2e em `tests/e2e/reveal.spec.ts` cobrindo os cenários 1 a 5 da US06 — [FR-012, FR-016]
+- [ ] T054 [P] [US6] Teste e2e em `tests/e2e/reveal.spec.ts` cobrindo os cenários 1 a 5 da US06, exceto a exibição de mediana e moda do cenário 3, verificada no teste e2e da US07 — [FR-012, FR-016]
 
 ### Implementation for User Story 6
 
@@ -205,11 +205,12 @@ histórias US01…US11 da spec.
 
 - [ ] T057 [P] [US7] Testes unitários em `tests/unit/domain/stats.test.ts` com os exemplos da US07: 3, 5, 5, 8 → mediana 5, modas [5]; 3, 3, 8, 8 → mediana 5,5, modas [3, 8]; 2, 3, 5 → mediana 3, modas [] ("Sem moda"); baralho de tempo convertendo `0.5h` em 0,5; distribuição só com cartas que receberam voto, na ordem do baralho — [FR-014]
 - [ ] T058 [P] [US7] Testes unitários em `tests/unit/client/format.test.ts`: mediana 5.5 exibida como "5,5", sufixo `h` no baralho de tempo, `[]` exibido como "Sem moda" — [FR-014]
+- [ ] T059 [P] [US7] Teste e2e em `tests/e2e/result.spec.ts`: revelar os votos 3, 5, 5 e 8 e verificar que todos os participantes veem mediana 5, moda 5 e a distribuição, sem média simples (completa o cenário 3 da US06) — [FR-014, FR-016]
 
 ### Implementation for User Story 7
 
-- [ ] T059 [US7] Implementar `computeResult` em `src/domain/stats.ts` (mediana, modas, distribuição) e usá-lo na revelação (T055), gravando `median` e `mode` (array JSON) em `rounds` — [FR-014]
-- [ ] T060 [US7] Criar `src/client/format.ts` (formatação pt-BR) e `src/client/components/ResultPanel.tsx` com mediana, moda e distribuição, sem média — [FR-014]
+- [ ] T060 [US7] Implementar `computeResult` em `src/domain/stats.ts` (mediana, modas, distribuição) e usá-lo na revelação (T055), gravando `median` e `mode` (array JSON) em `rounds` — [FR-014]
+- [ ] T061 [US7] Criar `src/client/format.ts` (formatação pt-BR) e `src/client/components/ResultPanel.tsx` com mediana, moda e distribuição, sem média — [FR-014]
 
 **Checkpoint**: resultado exibido corretamente.
 
@@ -223,12 +224,12 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 8
 
-- [ ] T061 [P] [US8] Teste de integração em `tests/integration/title.test.ts`: título de até 250 caracteres aceito e 251 recusado com `validation_error`; vazio limpa o título (gravado como NULL); `forbidden` para não facilitador; `round_not_voting` após a revelação — [FR-008, FR-017, FR-021]
+- [ ] T062 [P] [US8] Teste de integração em `tests/integration/title.test.ts`: título de até 250 caracteres aceito e 251 recusado com `validation_error`; vazio limpa o título (gravado como NULL); `forbidden` para não facilitador; `round_not_voting` após a revelação — [FR-008, FR-017, FR-021]
 
 ### Implementation for User Story 8
 
-- [ ] T062 [US8] Implementar `setTitle` em `src/domain/rounds.ts` e o handler `set_title` em `src/room/Room.ts` (`title` "0 a 250 caracteres após remover espaços nas pontas") — [FR-008, FR-017]
-- [ ] T063 [US8] Adicionar o campo de título da rodada ao `src/client/components/FacilitatorPanel.tsx` e exibir o título atual para todos em `src/client/routes/Room.tsx` — [FR-017]
+- [ ] T063 [US8] Implementar `setTitle` em `src/domain/rounds.ts` e o handler `set_title` em `src/room/Room.ts` (`title` "0 a 250 caracteres após remover espaços nas pontas") — [FR-008, FR-017]
+- [ ] T064 [US8] Adicionar o campo de título da rodada ao `src/client/components/FacilitatorPanel.tsx` e exibir o título atual para todos em `src/client/routes/Room.tsx` — [FR-017]
 
 **Checkpoint**: rodadas tituladas.
 
@@ -242,14 +243,14 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 9
 
-- [ ] T064 [P] [US9] Testes unitários em `tests/unit/domain/rounds.test.ts`: `new_round` só em `revealed`; arquiva a rodada; cria N+1 em `voting` sem votos; histórico da mais recente para a mais antiga — [FR-018, FR-019]
-- [ ] T065 [P] [US9] Teste de integração em `tests/integration/new-round.test.ts`: `round_not_revealed`, `forbidden`; `new_round` renova `last_activity_at` e o Alarm; `history` presente no `room_state` de todos os participantes (FR-019) — [FR-018, FR-019, FR-021, FR-023]
-- [ ] T066 [P] [US9] Teste e2e em `tests/e2e/history.spec.ts` cobrindo os cenários 1 a 3 da US09 — [FR-018, FR-019]
+- [ ] T065 [P] [US9] Testes unitários em `tests/unit/domain/rounds.test.ts`: `new_round` só em `revealed`; arquiva a rodada; cria N+1 em `voting` sem votos; histórico da mais recente para a mais antiga — [FR-018, FR-019]
+- [ ] T066 [P] [US9] Teste de integração em `tests/integration/new-round.test.ts`: `round_not_revealed`, `forbidden`; `new_round` renova `last_activity_at` e o Alarm; `history` presente no `room_state` de todos os participantes (FR-019) — [FR-018, FR-019, FR-021, FR-023]
+- [ ] T067 [P] [US9] Teste e2e em `tests/e2e/history.spec.ts` cobrindo os cenários 1 a 3 da US09 — [FR-018, FR-019]
 
 ### Implementation for User Story 9
 
-- [ ] T067 [US9] Implementar `newRound` em `src/domain/rounds.ts`, o handler `new_round` em `src/room/Room.ts` e a montagem de `history` no `room_state` — [FR-018, FR-019, FR-023]
-- [ ] T068 [US9] Adicionar o botão "Nova rodada" (habilitado só com a rodada revelada) ao `src/client/components/FacilitatorPanel.tsx` e criar `src/client/components/HistoryList.tsx` (título ou "Rodada N", mediana e moda) visível para todos — [FR-018, FR-019]
+- [ ] T068 [US9] Implementar `newRound` em `src/domain/rounds.ts`, o handler `new_round` em `src/room/Room.ts` e a montagem de `history` no `room_state` — [FR-018, FR-019, FR-023]
+- [ ] T069 [US9] Adicionar o botão "Nova rodada" (habilitado só com a rodada revelada) ao `src/client/components/FacilitatorPanel.tsx` e criar `src/client/components/HistoryList.tsx` (título ou "Rodada N", mediana e moda) visível para todos — [FR-018, FR-019]
 
 **Checkpoint**: planning completa com várias rodadas (escopo das 9 histórias P1).
 
@@ -263,13 +264,13 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 10
 
-- [ ] T069 [P] [US10] Testes unitários em `tests/unit/client/reconnect.test.ts` com timers falsos: tentativas em 0,5 s, 1 s, 2 s e depois a cada 2 s; nenhuma tentativa após fechamento 4404 — [FR-022]
-- [ ] T070 [P] [US10] Teste de integração em `tests/integration/reconnect.test.ts`: novo `join` com o mesmo `sessionId` recupera papel e voto da rodada em votação; após revelação ocorrida durante a queda, recebe a rodada revelada — [FR-020, FR-022]
-- [ ] T071 [P] [US10] Teste e2e em `tests/e2e/reconnect.spec.ts` usando `context.setOffline()` do Playwright para os cenários 1 a 3 da US10, verificando a reconexão em até 5 s (SC-002) — [FR-022]
+- [ ] T070 [P] [US10] Testes unitários em `tests/unit/client/reconnect.test.ts` com timers falsos: tentativas em 0,5 s, 1 s, 2 s e depois a cada 2 s; nenhuma tentativa após fechamento 4404 — [FR-022]
+- [ ] T071 [P] [US10] Teste de integração em `tests/integration/reconnect.test.ts`: novo `join` com o mesmo `sessionId` recupera papel e voto da rodada em votação; após revelação ocorrida durante a queda, recebe a rodada revelada — [FR-020, FR-022]
+- [ ] T072 [P] [US10] Teste e2e em `tests/e2e/reconnect.spec.ts` usando `context.setOffline()` do Playwright para os cenários 1 a 3 da US10, verificando a reconexão em até 5 s (SC-002) — [FR-022]
 
 ### Implementation for User Story 10
 
-- [ ] T072 [US10] Adicionar a reconexão automática a `src/client/realtime/connection.ts` (research R-09), reenviando `join` com o mesmo `sessionId`, e um indicador de estado da conexão em `src/client/routes/Room.tsx` — [FR-022]
+- [ ] T073 [US10] Adicionar a reconexão automática a `src/client/realtime/connection.ts` (research R-09), reenviando `join` com o mesmo `sessionId`, e um indicador de estado da conexão em `src/client/routes/Room.tsx` — [FR-022]
 
 **Checkpoint**: quedas não atrapalham a rodada.
 
@@ -283,12 +284,12 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 11
 
-- [ ] T073 [P] [US11] Teste de integração em `tests/integration/expiration.test.ts` com `runDurableObjectAlarm`: após o Alarm, o armazenamento fica vazio, conexões abertas recebem fechamento 4404 e nova conexão também recebe 4404; `join` sem voto nem nova rodada NÃO altera `last_activity_at` nem o Alarm (FR-023) — [FR-007, FR-023]
-- [ ] T074 [P] [US11] Teste e2e em `tests/e2e/reopen.spec.ts`: recarregar o link de uma sala com rodadas arquivadas mostra o histórico completo — [FR-019, FR-023]
+- [ ] T074 [P] [US11] Teste de integração em `tests/integration/expiration.test.ts` com `runDurableObjectAlarm`: após o Alarm, o armazenamento fica vazio, conexões abertas recebem fechamento 4404 e nova conexão também recebe 4404; `join` sem voto nem nova rodada NÃO altera `last_activity_at` nem o Alarm (FR-023) — [FR-007, FR-023]
+- [ ] T075 [P] [US11] Teste e2e em `tests/e2e/reopen.spec.ts`: recarregar o link de uma sala com rodadas arquivadas mostra o histórico completo — [FR-019, FR-023]
 
 ### Implementation for User Story 11
 
-- [ ] T075 [US11] Implementar `alarm()` em `src/room/Room.ts`: fecha todas as conexões com 4404 e apaga o armazenamento com `deleteAll()` (research R-05) — [FR-023]
+- [ ] T076 [US11] Implementar `alarm()` em `src/room/Room.ts`: fecha todas as conexões com 4404 e apaga o armazenamento com `deleteAll()` (research R-05) — [FR-023]
 
 **Checkpoint**: todas as histórias funcionando.
 
@@ -298,14 +299,14 @@ histórias US01…US11 da spec.
 
 **Purpose**: critérios de sucesso transversais e documentação.
 
-- [ ] T076 [P] Configurar projetos do Playwright em `playwright.config.ts` para Chromium, Firefox e WebKit com viewport de desktop de 1024 × 768 px (largura mínima suportada), e rodar a suíte e2e em todos (SC-004)
-- [ ] T077 [P] Revisão de acessibilidade em `src/client/components/`: navegação por teclado nas cartas e ações do facilitador e contraste AA; registrar o resultado em `tests/e2e/accessibility.spec.ts` com verificações de foco e teclado (SC-005)
-- [ ] T078 Teste e2e de carga de referência em `tests/e2e/ten-participants.spec.ts`: 10 participantes simultâneos concluem votar, revelar e nova rodada sem erro, medindo que um voto aparece para os demais em menos de 500 ms (SC-001, SC-003)
-- [ ] T079 [P] Criar `README.md` com objetivo, stack, comandos do `quickstart.md`, secrets do deploy (D-03) e links para `specs/001-pokerfe-mvp/`
-- [ ] T080 [P] Revisar todos os textos visíveis da interface em `src/client/` para garantir que estão somente em pt-BR, inclusive mensagens de erro exibidas a partir dos `code` dos contratos — [FR-026]
-- [ ] T081 [P] Criar o smoke test em `tests/smoke/deploy.smoke.spec.ts` com as 4 verificações de research R-03: `GET /` responde 200 e exibe a tela inicial; `POST /api/rooms` com `name` "[smoke] verificação de deploy" e `deckType` "points" responde 201 com `roomId` e `facilitatorToken` de 22 caracteres base62; conexão WebSocket nessa sala com `join` de facilitador recebe `room_state` com o nome da sala; conexão com `roomId` válido e inexistente é fechada com 4404; a suíte inteira roda em menos de 1 minuto — [FR-001, FR-003, FR-007, FR-009]
-- [ ] T082 Adicionar ao `.github/workflows/deploy.yml` um passo após o deploy que roda `npm run test:smoke` com `SMOKE_BASE_URL` igual à saída `deployment-url` do `cloudflare/wrangler-action@v4`; falha no smoke test marca o workflow como falho (constitution V); sem reversão automática
-- [ ] T083 Executar o roteiro de `specs/001-pokerfe-mvp/quickstart.md` contra o deploy em `*.workers.dev` (D-02) e registrar a URL de produção no `README.md`
+- [ ] T077 [P] Configurar projetos do Playwright em `playwright.config.ts` para Chromium, Firefox e WebKit com viewport de desktop de 1024 × 768 px (largura mínima suportada), e rodar a suíte e2e em todos (SC-004)
+- [ ] T078 [P] Revisão de acessibilidade em `src/client/components/`: navegação por teclado nas cartas e ações do facilitador e contraste AA; registrar o resultado em `tests/e2e/accessibility.spec.ts` com verificações de foco e teclado (SC-005)
+- [ ] T079 Teste e2e de carga de referência em `tests/e2e/ten-participants.spec.ts`: 10 participantes simultâneos concluem votar, revelar e nova rodada sem erro, medindo que um voto aparece para os demais em menos de 500 ms (SC-001, SC-003)
+- [ ] T080 [P] Criar `README.md` com objetivo, stack, comandos do `quickstart.md`, secrets do deploy (D-03) e links para `specs/001-pokerfe-mvp/`
+- [ ] T081 [P] Revisar todos os textos visíveis da interface em `src/client/` para garantir que estão somente em pt-BR, inclusive mensagens de erro exibidas a partir dos `code` dos contratos — [FR-026]
+- [ ] T082 [P] Criar o smoke test em `tests/smoke/deploy.smoke.spec.ts` com as 4 verificações de research R-03: `GET /` responde 200 e exibe a tela inicial; `POST /api/rooms` com `name` "[smoke] verificação de deploy" e `deckType` "points" responde 201 com `roomId` e `facilitatorToken` de 22 caracteres base62; conexão WebSocket nessa sala com `join` de facilitador recebe `room_state` com o nome da sala; conexão com `roomId` válido e inexistente é fechada com 4404; a suíte inteira roda em menos de 1 minuto — [FR-001, FR-003, FR-007, FR-009]
+- [ ] T083 Adicionar ao `.github/workflows/deploy.yml` um passo após o deploy que roda `npm run test:smoke` com `SMOKE_BASE_URL` igual à saída `deployment-url` do `cloudflare/wrangler-action@v4`; falha no smoke test marca o workflow como falho (constitution V); sem reversão automática
+- [ ] T084 Executar o roteiro de `specs/001-pokerfe-mvp/quickstart.md` contra o deploy em `*.workers.dev` (D-02) e registrar a URL de produção no `README.md`
 
 ---
 
@@ -316,14 +317,18 @@ histórias US01…US11 da spec.
 - **Setup (Phase 1)**: sem dependências. T010 (CI/deploy) depende de T001–T009 e, para o job de deploy funcionar, dos secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` cadastrados pelo responsável pelo produto.
 - **Foundational (Phase 2)**: depende do Setup; bloqueia todas as histórias.
 - **US01 (Phase 3)**: depende da Phase 2. T027 (avatares) exige resposta do responsável pelo produto antes de começar.
-- **US02–US09 (Phases 4–11)**: dependem da Phase 2 e de US01 (é a US01 que cria sala e implementa `join`).
-  - US04 (Phase 7) e US06 dependem de US05 (Phase 6, voto) para os cenários com voto registrado.
+- **Ordem de execução das histórias** (dependências reais entre os cenários de aceite): US01 → US03 → US02 → US05 → US04 → US06 → US07 → US08 → US09 → US10 → US11.
+  - US03 (Phase 4) depende de US01: monta presença e lista de participantes; o cenário "vejo que ele votou" é concluído na US05 (T043).
+  - US02 (Phase 5) depende de US03: o cenário 1 exige a lista de participantes.
+  - US05 (Phase 6) depende de US02: o e2e de voto precisa de um segundo participante entrando pelo link.
+  - US04 (Phase 7) depende de US05: o voto descartado ao virar observador exige voto registrado; "deixa de ser esperado para a revelação" é verificado na US06.
+  - US06 (Phase 8) depende de US04: os cenários 2 e 4 usam observadores; a exibição de mediana e moda do cenário 3 é verificada na US07 (T059).
   - US07 depende de US06 (o cálculo é chamado na revelação).
-  - US09 depende de US06 e US07 (arquiva rodada revelada com mediana e moda).
-  - US02, US03, US05 e US08 podem avançar em paralelo após US01.
-- **US10 (Phase 12)**: depende de US05 e US06.
+  - US08 depende de US06 (o título fica associado ao revelar).
+  - US09 depende de US07 e US08 (o histórico exibe título, mediana e moda).
+- **US10 (Phase 12)**: depende de US07 (após reconectar, o participante vê o resultado revelado).
 - **US11 (Phase 13)**: depende de US09 (histórico) e de US02 (tela de sala não encontrada).
-- **Polish (Phase 14)**: depende das histórias concluídas; T081 depende de T029 e T030 (criar sala e `join`); T082 depende de T010 e T081; T083 depende de T082 e dos secrets.
+- **Polish (Phase 14)**: depende das histórias concluídas; T082 depende de T029 e T030 (criar sala e `join`); T083 depende de T010 e T082; T084 depende de T083 e dos secrets.
 
 ### Within Each User Story
 
@@ -335,7 +340,7 @@ histórias US01…US11 da spec.
 - Setup: T003–T009 em paralelo.
 - Foundational: T011, T012, T013, T015, T016, T020, T021, T023 em paralelo.
 - Testes [P] de cada história em paralelo.
-- Após US01: US02, US03, US05 e US08 em paralelo.
+- As histórias seguem a ordem acima; o paralelismo está dentro de cada história (testes [P]) e entre Setup/Foundational.
 
 ## Parallel Example: User Story 5
 
@@ -351,8 +356,8 @@ Task: "Teste e2e em tests/e2e/vote.spec.ts"
 
 1. Phase 1 e Phase 2.
 2. US01 → validar isoladamente (sala criada, link copiável).
-3. US02, US03, US05, US06, US07 → primeira planning possível.
-4. US04, US08, US09 → planning completa (Sprint 2 do documento).
+3. US03, US02, US05, US04, US06, US07 → primeira planning possível.
+4. US08, US09 → planning completa (Sprint 2 do documento).
 5. US10, US11 e Polish → go-live (Sprint 3 do documento).
 
 ## Notes
