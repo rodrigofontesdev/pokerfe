@@ -65,10 +65,14 @@ Upgrade para WebSocket (`Upgrade: websocket`). Requisitos: FR-007, FR-009 a FR-0
 
 | Status | Quando |
 | --- | --- |
-| 101 | sala existe; conexão aceita com hibernação (R-04) |
+| 101 | `roomId` no formato válido; conexão aceita com hibernação (R-04) |
 | 400 | `roomId` fora do formato (22 caracteres base62) — erro `invalid_room_id` |
-| 404 | sala não existe ou expirou — erro `room_not_found`; nada é gravado |
 | 426 | requisição sem `Upgrade: websocket` — erro `upgrade_required` |
+
+Sala inexistente ou expirada: o servidor aceita o upgrade (101) e fecha a conexão imediatamente com
+o código 4404, sem gravar nada no armazenamento. Motivo: o `WebSocket` do navegador não expõe o
+status HTTP do handshake, então um 404 chegaria ao cliente como falha genérica e a mensagem do
+FR-007 não poderia ser exibida. (Correção de 2026-11-02 ao contrato aprovado.)
 
 Depois do 101, o cliente DEVE enviar `join` como primeira mensagem.
 

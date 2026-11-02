@@ -135,7 +135,7 @@ Códigos: `invalid_message`, `not_joined`, `forbidden`, `invalid_card`, `invalid
 
 | Código | Motivo |
 | --- | --- |
-| 4404 | a sala expirou e foi apagada enquanto havia conexões abertas (FR-023) |
+| 4404 | a sala não existe ou expirou: enviado logo após o upgrade quando não há sala, ou quando o Alarm de expiração apaga a sala com conexões abertas (FR-007, FR-023) |
 
 Ao receber 4404, o cliente exibe "Sala não encontrada ou expirada" e não tenta reconectar
 (FR-007). Para qualquer outro fechamento, o cliente reconecta conforme research R-09 e envia `join`

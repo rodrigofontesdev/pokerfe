@@ -98,6 +98,7 @@ src/
     ├── routes/          # telas Home e Room
     ├── components/      # Base UI + Tailwind: cartas, participantes, painel do facilitador, resultado, histórico
     ├── styles.css       # entrada do Tailwind CSS 4
+    ├── format.ts        # formatação pt-BR de mediana e moda (research R-12)
     ├── realtime/        # conexão WebSocket, reconexão (R-09), estado local
     ├── storage/         # localStorage: sessionId, nome e avatar lembrados (FR-006), token por sala
     └── assets/avatars/  # SVGs de animais (lista pendente com o responsável pelo produto)
