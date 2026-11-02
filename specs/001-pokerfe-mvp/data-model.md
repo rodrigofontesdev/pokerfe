@@ -78,7 +78,4 @@ revealed ──(new_round: facilitador)──▶ archived   e cria rodada N+1 em
   repete, nenhuma moda ("Sem moda"); empate exibe todas (FR-014).
 - Distribuição: contagem de votos por carta (spec, Clarifications).
 
-## Durable Object `CreationLimiter` (somente se D-01 = opção A)
-
-Uma instância por IP, com um contador e o início da janela; um Alarm apaga o registro ao fim da
-janela de 1 hora. Nenhum outro dado é guardado. **Status: Pendente (D-01).**
+Não há estrutura de limite de criação de salas: D-01 = C (sem limite no MVP).

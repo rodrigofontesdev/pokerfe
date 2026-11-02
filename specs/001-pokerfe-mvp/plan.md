@@ -6,7 +6,7 @@
 
 **Note**: Este plano separa o que está **Aprovado** (documento de produto, spec, constitution ou
 decisão do responsável pelo produto) do que é **Proposta** (aguarda aprovação no portão de revisão
-do plano) e do que está **Pendente** (decisões D-01 a D-03, ver research.md).
+do plano). As decisões D-01 a D-03 foram tomadas em 2026-11-02 (research.md R-10 e R-11).
 
 ## Summary
 
@@ -53,7 +53,7 @@ sala); 11 histórias de usuário.
 | --- | --- | --- |
 | I. Rastreabilidade | Todo componente abaixo aponta para FR/US; propostas estão marcadas e as lacunas viraram D-01 a D-03 | Aprovado |
 | II. Sem login, dados mínimos | Só nome e avatar (FR-027); token de facilitador guardado como hash; `sessionId` nunca exposto a terceiros (`participantId` público) | Aprovado |
-| III. Custo zero na Cloudflare | Worker + Durable Objects + static assets no plano gratuito; nenhum serviço extra | Aprovado; D-01 opção B depende de disponibilidade não confirmada no plano gratuito |
+| III. Custo zero na Cloudflare | Worker + Durable Objects + static assets no plano gratuito; nenhum serviço extra | Aprovado |
 | IV. Regras em módulo puro | `src/domain/` sem imports de `cloudflare:*`, DOM ou rede; consumido por `src/room/` e `src/client/` | Aprovado |
 | V. Testes como evidência | Vitest no domínio e no Durable Object; Playwright no fluxo principal | Aprovado |
 
@@ -90,7 +90,6 @@ src/
 │   └── index.ts         # entrypoint do Worker: POST /api/rooms, upgrade /api/rooms/:id/ws, 404 de /api/*
 ├── room/
 │   └── Room.ts          # Durable Object da sala: SQLite, hibernação de WebSocket, broadcast, Alarm
-├── limiter/             # somente se D-01 = A: Durable Object CreationLimiter
 └── client/
     ├── main.tsx
     ├── routes/          # Home (/) e Room (/r/:roomId)
@@ -109,6 +108,7 @@ vite.config.ts
 vitest.config.ts         # ou projetos separados para unit e integração
 playwright.config.ts
 wrangler.jsonc
+.github/workflows/deploy.yml  # D-03: testes + deploy com cloudflare/wrangler-action@v4
 tsconfig.json
 package.json
 ```
@@ -128,14 +128,16 @@ Cloudflare.
 | `test:e2e` | Playwright |
 | `deploy` | build e `wrangler deploy` |
 
-## Decisões pendentes (bloqueiam tarefas específicas)
+## Decisões registradas
 
-| ID | Decisão | Bloqueia |
+| ID | Decisão (2026-11-02) | Efeito no plano |
 | --- | --- | --- |
-| D-01 | Como limitar a criação de salas por IP (R-10): A) Durable Object por IP, 20 por hora, exato; B) binding nativo, janela de 60 s, aproximado; C) sem limite no MVP | tarefa de limite de criação |
-| D-02 | Domínio de produção: `*.workers.dev` ou domínio próprio (qual?) | configuração de rota/domínio |
-| D-03 | Deploy automático via GitHub Actions com secret `CLOUDFLARE_API_TOKEN` no repositório | workflow de deploy; item "deploy automático" da Definition of Done |
-| — | Lista final de avatares de animais | tarefa de avatares (decidida com o responsável pelo produto durante a implementação) |
+| D-01 | Sem limite de criação de salas por IP no MVP | FR-025 removido; sem resposta 429 |
+| D-02 | Sem domínio próprio | produção em `*.workers.dev`; nenhuma configuração de rota ou domínio |
+| D-03 | Deploy automático autorizado | workflow GitHub Actions com `cloudflare/wrangler-action@v4`; o responsável cadastra os secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` |
+
+Pendência remanescente: a lista final de avatares de animais, decidida com o responsável pelo
+produto durante a tarefa de avatares.
 
 ## Complexity Tracking
 

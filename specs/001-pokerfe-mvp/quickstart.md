@@ -10,8 +10,10 @@ fundação do projeto os criar.
 
 - Node.js 22 ou superior e npm (research R-02).
 - Navegadores do Playwright instalados (`npx playwright install`).
-- Para deploy: conta Cloudflare do responsável pelo produto e Wrangler autenticado (`npx wrangler
-  login`); decisões D-02 e D-03 (domínio e deploy automático) definidas.
+- Para deploy manual: conta Cloudflare do responsável pelo produto e Wrangler autenticado
+  (`npx wrangler login`). O deploy publica em `*.workers.dev` (D-02).
+- Para deploy automático (D-03): secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID`
+  cadastrados no repositório pelo responsável pelo produto.
 
 ## Comandos
 

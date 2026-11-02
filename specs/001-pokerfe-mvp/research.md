@@ -98,7 +98,8 @@ Versões consultadas no registro npm em 2026-11-02.
 
 ## R-10 Limite de criação de salas por IP
 
-- **Decision**: **Status: Pendente (D-01).**
+- **Decision**: sem limite de criação de salas no MVP; FR-025 removido da spec. **Status: Aprovada
+  (D-01 = C, 2026-11-02).**
 - **Constatação**: o binding nativo de rate limiting da Cloudflare só aceita janelas de 10 ou 60
   segundos, conta de forma aproximada e por localidade, e a documentação consultada não informa
   disponibilidade no plano gratuito. O valor do documento ("ex.: 20 por hora") não pode ser
@@ -112,10 +113,13 @@ Versões consultadas no registro npm em 2026-11-02.
 
 ## R-11 Domínio e deploy automático
 
-- **Decision**: **Status: Pendente (D-02 e D-03).**
-- **Constatação**: a Definition of Done exige "deploy automático concluído", mas o domínio próprio
-  não foi informado, e um workflow de deploy precisa de um secret de API da Cloudflare no GitHub.
-  Até a decisão, o deploy usa o subdomínio `*.workers.dev` da conta Cloudflare do responsável.
+- **Decision**: sem domínio próprio; a aplicação é publicada no subdomínio `*.workers.dev` da conta
+  Cloudflare do responsável pelo produto. **Status: Aprovada (D-02, 2026-11-02).**
+- **Decision**: deploy automático com GitHub Actions usando `cloudflare/wrangler-action@v4`, que lê
+  os secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` (README da action). Os secrets são
+  cadastrados pelo responsável pelo produto no repositório; o agente não manipula seus valores.
+  **Status: workflow Aprovado (D-03, 2026-11-02); gatilho em push na `main` após testes
+  aprovados é Proposta.**
 
 ## R-12 Formatação de números
 

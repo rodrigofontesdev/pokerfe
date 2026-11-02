@@ -44,6 +44,11 @@ abaixo são os mesmos do documento.
 - Q: Qual o tamanho máximo dos campos de texto? → A: Nome da sala 250 caracteres, nome de exibição
   45 caracteres, título da rodada 250 caracteres.
 - Q: O que é a distribuição dos votos? → A: Quantos votos cada carta recebeu.
+- Q: Como limitar a criação de salas por IP? → A: Sem limite no MVP (decisão D-01 = C); o FR-025
+  foi removido.
+- Q: Haverá domínio próprio? → A: Não; a aplicação usa o subdomínio `workers.dev` da conta
+  Cloudflare (D-02).
+- Q: O deploy automático via GitHub Actions está autorizado? → A: Sim (D-03).
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -363,8 +368,7 @@ expirada e ver a mensagem.
   ou uma nova rodada renovam o prazo, e só abrir a sala não renova. Após o prazo, os dados da sala
   DEVEM ser excluídos. [US11]
 - **FR-024**: Não há limite fixo de participantes por sala. [Documento, regra 10]
-- **FR-025**: O sistema DEVE limitar a criação de salas por origem para evitar abuso. O valor do
-  limite é decisão do plano técnico. [Documento, "URL única e segura"]
+- **FR-025**: *(Removido em 2026-11-02: sem limite de criação de salas no MVP, decisão D-01.)*
 
 **Gerais**
 
@@ -407,6 +411,6 @@ expirada e ver a mensagem.
   foi aceito para o MVP.
 - Login, contas, notificações e e-mail, integrações (Jira, Azure DevOps, Linear), baralhos
   personalizados, avatar personalizado ou foto, revelação automática, timer, chat, exportação do
-  histórico e reestimar rodada revelada estão fora do escopo.
+  histórico, reestimar rodada revelada e limite de criação de salas por IP estão fora do escopo.
 - Textos de interface não definidos nesta spec podem ser redigidos em pt-BR durante a
   implementação, sem criar regras novas.

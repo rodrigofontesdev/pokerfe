@@ -15,7 +15,8 @@ Formato de erro comum (JSON, `Content-Type: application/json; charset=utf-8`):
 
 ## POST /api/rooms — criar sala
 
-Sem autenticação. Requisitos: FR-001, FR-002, FR-003, FR-008, FR-013, FR-023, FR-025.
+Sem autenticação e sem limite de criação no MVP (D-01). Requisitos: FR-001, FR-002, FR-003, FR-008,
+FR-013, FR-023.
 
 **Request body**
 
@@ -36,7 +37,6 @@ facilitador antes de chamar este endpoint, para que nenhuma sala seja criada com
 | 201 | `{ "roomId": "<22 caracteres base62>", "facilitatorToken": "<22 caracteres base62>" }` | sala criada; `last_activity_at` e Alarm de 30 dias gravados |
 | 400 | erro `invalid_request` | corpo não é JSON, campo ausente ou fora da validação |
 | 405 | erro `method_not_allowed` | método diferente de POST |
-| 429 | erro `rate_limited` | limite de criação por IP atingido (somente se D-01 ≠ C) |
 
 **Efeitos colaterais**: cria a linha `room` no Durable Object `Room` endereçado pelo `roomId`,
 com `current_round = 1` e a rodada 1 em `voting`. O `facilitatorToken` só aparece nesta resposta;
