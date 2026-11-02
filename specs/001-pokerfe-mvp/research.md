@@ -47,6 +47,19 @@ Versões consultadas no registro npm em 2026-11-02.
   `^4.1.0 || ^5.0.0`. Cobrir a interface com Playwright evita adicionar Testing Library e jsdom.
 - **Alternatives considered**: Testing Library + jsdom para componentes (dependências a mais);
   Miniflare manual (mais código de teste).
+- **Decision (smoke test)**: suíte curta de Playwright em `tests/smoke/`, executada contra a URL
+  publicada logo após cada deploy (job do GitHub Actions, D-03) e também possível contra o ambiente
+  local. Verifica somente o essencial, em menos de 1 minuto: (1) `GET /` responde 200 e exibe a
+  tela inicial; (2) `POST /api/rooms` com `name` "[smoke] verificação de deploy" e `deckType`
+  "points" responde 201 com `roomId` e `facilitatorToken` no formato do contrato; (3) uma conexão
+  WebSocket nessa sala com `join` de facilitador recebe `room_state` com o nome da sala; (4) uma
+  conexão com `roomId` válido e inexistente é fechada com 4404. Falha no smoke test marca o
+  workflow como falho; reversão automática do deploy não faz parte do MVP. As salas criadas pelo
+  smoke test expiram em 30 dias como qualquer sala (FR-023). **Status: smoke test Aprovado
+  (pedido do responsável pelo produto em 2026-11-02); o conteúdo das 4 verificações é Proposta.**
+- **Diferença entre os tipos de teste**: unitário (regras puras, Vitest), integração (Worker e
+  Durable Object no runtime local, Vitest), ponta a ponta (fluxos completos das histórias em
+  navegador, Playwright, ambiente local) e smoke (sanidade do ambiente publicado, Playwright).
 
 ## R-04 WebSocket com hibernação
 

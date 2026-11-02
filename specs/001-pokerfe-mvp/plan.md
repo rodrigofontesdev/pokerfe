@@ -29,7 +29,7 @@ Tailwind CSS 4 com `@tailwindcss/vite`; Base UI (`@base-ui/react`) 1.x; Zod 4;
 **Storage**: SQLite do Durable Object de cada sala (Aprovado, R-01); ver
 [data-model.md](./data-model.md).
 
-**Testing**: Vitest e Playwright (Aprovado); `@cloudflare/vitest-plugin` para testes de Worker e
+**Testing**: Vitest e Playwright (Aprovado); smoke test pós-deploy com Playwright (Aprovado, R-03); `@cloudflare/vitest-plugin` para testes de Worker e
 Durable Object (Aprovado, R-03).
 
 **Target Platform**: Cloudflare Workers, plano gratuito (Aprovado); navegadores: 2 últimas versões
@@ -107,7 +107,8 @@ src/
 tests/
 ├── unit/                # Vitest, ambiente Node: src/domain e src/shared
 ├── integration/         # Vitest + @cloudflare/vitest-plugin: Worker e Durable Object
-└── e2e/                 # Playwright: fluxos das histórias US01–US11
+├── e2e/                 # Playwright: fluxos das histórias US01–US11 (ambiente local)
+└── smoke/               # Playwright: sanidade do ambiente publicado após cada deploy (R-03)
 
 index.html
 vite.config.ts
@@ -132,6 +133,7 @@ Cloudflare.
 | `typecheck` | checagem de tipos sem emitir arquivos |
 | `test` | Vitest (unitários e integração) |
 | `test:e2e` | Playwright |
+| `test:smoke` | Playwright em `tests/smoke/` contra a URL em `SMOKE_BASE_URL` (padrão: servidor local) |
 | `deploy` | build e `wrangler deploy` |
 
 ## Decisões registradas

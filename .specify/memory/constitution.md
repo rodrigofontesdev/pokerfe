@@ -48,10 +48,13 @@ Origem: documento de produto Pokerfé, tabela de riscos ("Dependência de um ún
 
 - Regras de negócio DEVEM ter testes unitários com Vitest; o fluxo principal DEVE ter teste de
   ponta a ponta com Playwright.
+- Cada deploy em produção DEVE ser seguido de um smoke test automatizado contra a URL publicada;
+  falha no smoke test marca o deploy como falho.
 - Uma tarefa só pode ser declarada concluída com os testes relevantes executados e aprovados;
   resultado de teste NÃO DEVE ser declarado sem execução real.
 
-Origem: documento de produto Pokerfé, "Definition of Done" e "Stack aprovada".
+Origem: documento de produto Pokerfé, "Definition of Done" e "Stack aprovada"; smoke test
+incluído por pedido do responsável pelo produto em 2026-11-02.
 
 ## Restrições técnicas aprovadas
 
@@ -74,7 +77,8 @@ Origem: documento de produto Pokerfé e decisões do responsável pelo produto e
 - O fluxo segue o Spec Kit: specify → clarify → plan → tasks → analyze → implement, com
   aprovação humana da spec antes do plan e do plan antes das tasks.
 - Definition of Done de cada entrega: critérios de aceite validados, testes unitários das regras
-  e teste de ponta a ponta do fluxo principal aprovados, code review aprovado, deploy concluído,
+  e teste de ponta a ponta do fluxo principal aprovados, code review aprovado, deploy concluído com
+  smoke test aprovado em produção,
   e teste com 10 ou mais participantes simultâneos quando a entrega afetar a sala em tempo real.
 - Textos de interface não definidos nas specs podem ser redigidos durante a implementação, em
   pt-BR, sem criar novas regras de negócio.
@@ -91,4 +95,4 @@ Origem: documento de produto Pokerfé, "Definition of Ready/Done"; decisões de 
   ou seção nova; PATCH para ajustes de redação.
 - Toda revisão de código e de issue DEVE verificar conformidade com os princípios I a V.
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-02
+**Version**: 1.1.0 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-02

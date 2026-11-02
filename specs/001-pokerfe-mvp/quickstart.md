@@ -24,6 +24,7 @@ fundação do projeto os criar.
 | Checar tipos | `npm run typecheck` | zero erros de TypeScript |
 | Testes unitários e de integração | `npm test` | todos os testes do Vitest aprovados |
 | Testes de ponta a ponta | `npm run test:e2e` | todos os testes do Playwright aprovados |
+| Smoke test | `SMOKE_BASE_URL=<url publicada> npm run test:smoke` | as 4 verificações do smoke test aprovadas em menos de 1 minuto (research R-03) |
 | Build | `npm run build` | artefatos da SPA e do Worker gerados sem erro |
 | Deploy | `npm run deploy` | Worker publicado; URL de produção acessível |
 
@@ -49,6 +50,8 @@ Use dois ou mais navegadores (ou um normal e um anônimo) para simular participa
 8. **Expiração (US11)**: coberta por teste de integração que executa o Alarm
    (`runDurableObjectAlarm`); depois dele, o link mostra "Sala não encontrada ou expirada".
 9. **Carga de referência (SC-003)**: 10 participantes simultâneos concluem uma rodada completa.
+10. **Smoke test pós-deploy**: após cada deploy na `main`, o workflow roda `npm run test:smoke`
+    contra a URL `*.workers.dev`; o resultado aparece no job do GitHub Actions.
 
 Detalhes de contrato: [contracts/http-api.md](./contracts/http-api.md) e
 [contracts/websocket-protocol.md](./contracts/websocket-protocol.md). Dados:

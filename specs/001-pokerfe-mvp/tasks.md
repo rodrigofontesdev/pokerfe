@@ -27,16 +27,16 @@ histórias US01…US11 da spec.
 
 **Purpose**: inicializar o projeto com a stack aprovada (research R-02, R-03, R-07, R-08).
 
-- [ ] T001 Criar `package.json` (`"type": "module"`, `"private": true`, `"engines": { "node": ">=26" }`) com os scripts `dev`, `build`, `typecheck`, `test`, `test:e2e` e `deploy` descritos em plan.md "Scripts npm", e `.nvmrc` com `26`
+- [ ] T001 Criar `package.json` (`"type": "module"`, `"private": true`, `"engines": { "node": ">=26" }`) com os scripts `dev`, `build`, `typecheck`, `test`, `test:e2e`, `test:smoke` e `deploy` descritos em plan.md "Scripts npm", e `.nvmrc` com `26`
 - [ ] T002 Instalar com npm as dependências aprovadas em plan.md "Primary Dependencies" (React 19, Vite estável mais recente, `@vitejs/plugin-react`, `@cloudflare/vite-plugin` 1.x, `wrangler` 4, `@tanstack/react-router` 1.x, `tailwindcss` 4 + `@tailwindcss/vite`, `@base-ui/react` 1.x, `zod` 4) e de desenvolvimento (`typescript`, `@cloudflare/workers-types`, `vitest`, `@cloudflare/vitest-plugin`, `@playwright/test`), gerando `package-lock.json`; NÃO usar `@cloudflare/vitest-pool-workers` (descontinuado) nem `@base-ui-components/react` (renomeado)
 - [ ] T003 [P] Criar `tsconfig.json` em modo `strict` cobrindo `src/` e `tests/`, com os tipos de `@cloudflare/workers-types` disponíveis para `src/worker/` e `src/room/`
 - [ ] T004 [P] Criar `vite.config.ts` com os plugins `@vitejs/plugin-react`, `@tailwindcss/vite` e `@cloudflare/vite-plugin`
 - [ ] T005 [P] Criar `wrangler.jsonc` com `name: "pokerfe"`, `main: "src/worker/index.ts"`, `compatibility_date` do dia da criação, `assets.not_found_handling: "single-page-application"`, binding de Durable Object `ROOM` para a classe `Room` e migração `new_sqlite_classes: ["Room"]`
 - [ ] T006 [P] Criar `vitest.config.ts` com dois projetos: `unit` (ambiente Node, `tests/unit/**`) e `integration` (`@cloudflare/vitest-plugin` lendo `wrangler.jsonc`, `tests/integration/**`)
-- [ ] T007 [P] Criar `playwright.config.ts` com `testDir: "tests/e2e"` e `webServer` iniciando `npm run dev`
+- [ ] T007 [P] Criar `playwright.config.ts` com um projeto `e2e` (`testDir: "tests/e2e"`, `webServer` iniciando `npm run dev`) e um projeto `smoke` (`testDir: "tests/smoke"`, `baseURL` lido de `SMOKE_BASE_URL`, sem `webServer` quando a variável estiver definida), e fazer `test:e2e` e `test:smoke` rodarem cada um só o seu projeto
 - [ ] T008 [P] Criar `index.html`, `src/client/main.tsx` (renderiza um componente raiz vazio) e `src/client/styles.css` com `@import "tailwindcss";`
 - [ ] T009 [P] Criar `.gitignore` com `node_modules/`, `dist/`, `.wrangler/`, `test-results/`, `playwright-report/` e `.specify/feature.json`
-- [ ] T010 Criar `.github/workflows/deploy.yml`: em `pull_request` e `push` na `main`, rodar `npm ci`, `npm run typecheck`, `npm test`, instalar navegadores do Playwright e `npm run test:e2e`; somente em `push` na `main` e após os testes, rodar `npm run build` e `cloudflare/wrangler-action@v4` com `apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}` e `accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}` (D-03); Node via `.nvmrc`
+- [ ] T010 Criar `.github/workflows/deploy.yml`: em `pull_request` e `push` na `main`, rodar `npm ci`, `npm run typecheck`, `npm test`, instalar navegadores do Playwright e `npm run test:e2e`; somente em `push` na `main` e após os testes, rodar `npm run build` e `cloudflare/wrangler-action@v4` com `apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}` e `accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}` (D-03); Node via `.nvmrc`; o passo de smoke test pós-deploy é adicionado em T082
 
 **Checkpoint**: `npm run dev`, `npm run typecheck`, `npm test` e `npm run build` executam sem erro com o app vazio.
 
@@ -303,7 +303,9 @@ histórias US01…US11 da spec.
 - [ ] T078 Teste e2e de carga de referência em `tests/e2e/ten-participants.spec.ts`: 10 participantes simultâneos concluem votar, revelar e nova rodada sem erro, medindo que um voto aparece para os demais em menos de 500 ms (SC-001, SC-003)
 - [ ] T079 [P] Criar `README.md` com objetivo, stack, comandos do `quickstart.md`, secrets do deploy (D-03) e links para `specs/001-pokerfe-mvp/`
 - [ ] T080 [P] Revisar todos os textos visíveis da interface em `src/client/` para garantir que estão somente em pt-BR, inclusive mensagens de erro exibidas a partir dos `code` dos contratos — [FR-026]
-- [ ] T081 Executar o roteiro de `specs/001-pokerfe-mvp/quickstart.md` contra o deploy em `*.workers.dev` (D-02) e registrar a URL de produção no `README.md`
+- [ ] T081 [P] Criar o smoke test em `tests/smoke/deploy.smoke.spec.ts` com as 4 verificações de research R-03: `GET /` responde 200 e exibe a tela inicial; `POST /api/rooms` com `name` "[smoke] verificação de deploy" e `deckType` "points" responde 201 com `roomId` e `facilitatorToken` de 22 caracteres base62; conexão WebSocket nessa sala com `join` de facilitador recebe `room_state` com o nome da sala; conexão com `roomId` válido e inexistente é fechada com 4404; a suíte inteira roda em menos de 1 minuto — [FR-001, FR-003, FR-007, FR-009]
+- [ ] T082 Adicionar ao `.github/workflows/deploy.yml` um passo após o deploy que roda `npm run test:smoke` com `SMOKE_BASE_URL` igual à saída `deployment-url` do `cloudflare/wrangler-action@v4`; falha no smoke test marca o workflow como falho (constitution V); sem reversão automática
+- [ ] T083 Executar o roteiro de `specs/001-pokerfe-mvp/quickstart.md` contra o deploy em `*.workers.dev` (D-02) e registrar a URL de produção no `README.md`
 
 ---
 
@@ -321,7 +323,7 @@ histórias US01…US11 da spec.
   - US02, US03, US05 e US08 podem avançar em paralelo após US01.
 - **US10 (Phase 12)**: depende de US05 e US06.
 - **US11 (Phase 13)**: depende de US09 (histórico) e de US02 (tela de sala não encontrada).
-- **Polish (Phase 14)**: depende das histórias concluídas; T081 depende de T010 e dos secrets.
+- **Polish (Phase 14)**: depende das histórias concluídas; T081 depende de T029 e T030 (criar sala e `join`); T082 depende de T010 e T081; T083 depende de T082 e dos secrets.
 
 ### Within Each User Story
 
