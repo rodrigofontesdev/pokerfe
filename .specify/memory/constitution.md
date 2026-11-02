@@ -56,15 +56,18 @@ Origem: documento de produto Pokerfé, "Definition of Done" e "Stack aprovada".
 ## Restrições técnicas aprovadas
 
 - Linguagem: TypeScript em todo o projeto (frontend, Worker e Durable Object).
-- Frontend: SPA em React + Vite, servida como assets estáticos pelo Worker.
+- Frontend: SPA em React + Vite, servida como assets estáticos pelo Worker; TanStack Router para
+  rotas; Tailwind CSS e Base UI (`@base-ui/react`) para interface.
 - Persistência: SQLite do próprio Durable Object; expiração por Alarm 30 dias após a última
   atividade que renova o prazo.
 - Tempo real: WebSocket entre navegador e Durable Object da sala.
-- Gerenciador de pacotes: npm.
+- Validação de dados: Zod, com schemas compartilhados entre cliente e servidor.
+- Runtime de desenvolvimento e CI: Node.js na versão LTS ativa; gerenciador de pacotes: npm.
 - Testes: Vitest (unitários e integração) e Playwright (ponta a ponta).
 - Idioma da interface: somente pt-BR.
 
-Origem: documento de produto Pokerfé e decisões do responsável pelo produto em 2026-11-02.
+Origem: documento de produto Pokerfé e decisões do responsável pelo produto em 2026-11-02
+(inclusive a escolha de TanStack Router, Tailwind CSS, Base UI, Zod e Node.js LTS).
 
 ## Fluxo de desenvolvimento e quality gates
 
@@ -88,4 +91,4 @@ Origem: documento de produto Pokerfé, "Definition of Ready/Done"; decisões de 
   ou seção nova; PATCH para ajustes de redação.
 - Toda revisão de código e de issue DEVE verificar conformidade com os princípios I a V.
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2026-11-02
+**Version**: 1.0.0 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-02

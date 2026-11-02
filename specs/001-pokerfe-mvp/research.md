@@ -6,8 +6,9 @@ Cada decisão tem um status:
 
 - **Aprovada**: consta no documento de produto, na spec ou foi decidida pelo responsável pelo
   produto.
-- **Proposta**: sugerida no planejamento; só vale como requisito depois de aprovada no portão de
-  revisão do plano.
+- **Proposta**: sugerida no planejamento. **O plano foi aprovado em 2026-11-02; toda Proposta não
+  substituída nesse dia passou a valer como Aprovada.** Exceção: "rotas definidas em código" (R-08),
+  incluída depois da aprovação e ainda Proposta.
 - **Pendente**: precisa de decisão humana; tarefas que dependem dela ficam bloqueadas.
 
 Versões consultadas no registro npm em 2026-11-02.
@@ -24,8 +25,10 @@ Versões consultadas no registro npm em 2026-11-02.
 
 ## R-02 Ferramentas de build e configuração
 
-- **Decision**: Vite 8 com `@vitejs/plugin-react` 6 e `@cloudflare/vite-plugin` 1.x; Wrangler 4
-  com configuração em `wrangler.jsonc`; Node.js 22 LTS ou superior. **Status: Proposta.**
+- **Decision**: Node.js na versão LTS ativa (26 em 2026-11-02; a 24 encerrou o suporte ativo em
+  2026-10-20, segundo endoflife.date); Vite na versão estável mais recente (8.x em 2026-11-02) com
+  `@vitejs/plugin-react` e `@cloudflare/vite-plugin` 1.x; Wrangler 4 com configuração em
+  `wrangler.jsonc`. **Status: Aprovada (2026-11-02).**
 - **Rationale**: React + Vite + TypeScript + npm estão aprovados. O `@cloudflare/vite-plugin` 1.67.0
   publicado lê `wrangler.jsonc`/`wrangler.json`/`wrangler.toml` (verificado no pacote publicado);
   o formato `cloudflare.config.ts` visto no repositório da Cloudflare ainda não foi publicado e
@@ -78,17 +81,26 @@ Versões consultadas no registro npm em 2026-11-02.
 
 ## R-07 Validação de entrada
 
-- **Decision**: validadores escritos à mão (type guards) em `src/shared/protocol.ts`, sem
-  biblioteca de schema. **Status: Proposta.**
-- **Rationale**: o protocolo é pequeno (6 mensagens de cliente) e evita dependência nova.
-- **Alternatives considered**: zod ou valibot.
+- **Decision**: Zod 4 (4.6.7 em 2026-11-02) para os schemas do protocolo HTTP e WebSocket e dos
+  formulários, definidos uma única vez em `src/shared/` e usados no Worker, no Durable Object e no
+  cliente. **Status: Aprovada (2026-11-02, escolha do responsável pelo produto).**
+- **Rationale**: uma única fonte de validação entre servidor e cliente, com tipos inferidos.
+- **Alternatives considered**: validadores escritos à mão (proposta original, substituída); valibot.
 
 ## R-08 Roteamento e estilo da SPA
 
-- **Decision**: duas rotas (`/` e `/r/:roomId`) resolvidas com a History API, sem biblioteca de
-  roteamento; estilos com CSS Modules nativos do Vite. **Status: Proposta.**
-- **Rationale**: escopo de duas telas não justifica dependências.
-- **Alternatives considered**: React Router; Tailwind CSS.
+- **Decision**: TanStack Router (`@tanstack/react-router` 1.x) para as rotas `/` e `/r/$roomId`;
+  Tailwind CSS 4 com `@tailwindcss/vite`; Base UI (`@base-ui/react` 1.x) como componentes
+  acessíveis sem estilo, estilizados com Tailwind. **Status: Aprovada (2026-11-02, escolha do
+  responsável pelo produto).** Rotas definidas em código, sem geração de arquivos pelo
+  `@tanstack/router-plugin`: **Status: Proposta.**
+- **Rationale**: Base UI fornece comportamento acessível (teclado, foco, ARIA) para diálogos, menus
+  e botões, apoiando SC-005; Tailwind estiliza sem CSS por componente. O pacote antigo
+  `@base-ui-components/react` foi renomeado para `@base-ui/react` (aviso no npm) e NÃO deve ser
+  usado. Versões verificadas em 2026-11-02: TanStack Router 1.170.46, Tailwind 4.3.3, Base UI 1.9.0;
+  todas aceitam React 19, e o plugin do Tailwind aceita Vite 8.
+- **Alternatives considered**: History API sem biblioteca e CSS Modules (proposta original,
+  substituída); roteamento por arquivos com `@tanstack/router-plugin`.
 
 ## R-09 Reconexão automática
 

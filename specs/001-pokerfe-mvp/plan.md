@@ -4,9 +4,9 @@
 
 **Input**: Feature specification from `/specs/001-pokerfe-mvp/spec.md`
 
-**Note**: Este plano separa o que está **Aprovado** (documento de produto, spec, constitution ou
-decisão do responsável pelo produto) do que é **Proposta** (aguarda aprovação no portão de revisão
-do plano). As decisões D-01 a D-03 foram tomadas em 2026-11-02 (research.md R-10 e R-11).
+**Note**: Plano **aprovado em 2026-11-02** pelo responsável pelo produto, com as substituições de
+stack registradas em research.md (R-02, R-07, R-08). O único item ainda Proposta é "rotas definidas
+em código" (R-08). As decisões D-01 a D-03 foram tomadas em 2026-11-02 (research.md R-10 e R-11).
 
 ## Summary
 
@@ -18,17 +18,19 @@ a API; cada sala é um Durable Object com SQLite, WebSocket com hibernação e A
 
 ## Technical Context
 
-**Language/Version**: TypeScript em todo o projeto (Aprovado); Node.js 22 ou superior para
-desenvolvimento e build (Proposta, exigência do Wrangler 4 — research R-02).
+**Language/Version**: TypeScript em todo o projeto (Aprovado); Node.js LTS ativo (26) para
+desenvolvimento, build e CI (Aprovado — research R-02).
 
-**Primary Dependencies**: React 19 + Vite 8 (Aprovado: React + Vite); `@vitejs/plugin-react` 6,
-`@cloudflare/vite-plugin` 1.x, Wrangler 4, `@cloudflare/workers-types` (Proposta, R-02).
+**Primary Dependencies**: React 19; Vite na versão estável mais recente (8.x) com
+`@vitejs/plugin-react` e `@cloudflare/vite-plugin` 1.x; Wrangler 4; TanStack Router 1.x;
+Tailwind CSS 4 com `@tailwindcss/vite`; Base UI (`@base-ui/react`) 1.x; Zod 4;
+`@cloudflare/workers-types` (Aprovado em 2026-11-02 — research R-02, R-07, R-08).
 
 **Storage**: SQLite do Durable Object de cada sala (Aprovado, R-01); ver
 [data-model.md](./data-model.md).
 
 **Testing**: Vitest e Playwright (Aprovado); `@cloudflare/vitest-plugin` para testes de Worker e
-Durable Object (Proposta, R-03).
+Durable Object (Aprovado, R-03).
 
 **Target Platform**: Cloudflare Workers, plano gratuito (Aprovado); navegadores: 2 últimas versões
 de Chrome, Edge, Firefox e Safari, com layout funcional em celular (Aprovado, SC-004).
@@ -80,20 +82,22 @@ specs/001-pokerfe-mvp/
 
 ### Source Code (repository root)
 
-Estrutura **Proposta**:
+Estrutura aprovada:
 
 ```text
 src/
 ├── domain/              # regras puras: baralhos, votação, revelação, observadores, mediana, moda, rodadas, histórico
-├── shared/              # tipos e validadores do protocolo HTTP/WebSocket, limites de campos, IDs
+├── shared/              # schemas Zod do protocolo HTTP/WebSocket, limites de campos, baralhos, IDs
 ├── worker/
 │   └── index.ts         # entrypoint do Worker: POST /api/rooms, upgrade /api/rooms/:id/ws, 404 de /api/*
 ├── room/
 │   └── Room.ts          # Durable Object da sala: SQLite, hibernação de WebSocket, broadcast, Alarm
 └── client/
     ├── main.tsx
-    ├── routes/          # Home (/) e Room (/r/:roomId)
-    ├── components/      # cartas, lista de participantes, painel do facilitador, resultado, histórico
+    ├── router.tsx       # TanStack Router: rotas / e /r/$roomId (definidas em código)
+    ├── routes/          # telas Home e Room
+    ├── components/      # Base UI + Tailwind: cartas, participantes, painel do facilitador, resultado, histórico
+    ├── styles.css       # entrada do Tailwind CSS 4
     ├── realtime/        # conexão WebSocket, reconexão (R-09), estado local
     ├── storage/         # localStorage: sessionId, nome e avatar lembrados (FR-006), token por sala
     └── assets/avatars/  # SVGs de animais (lista pendente com o responsável pelo produto)
@@ -117,7 +121,7 @@ package.json
 isolado em `src/domain/` cumpre a constitution IV e permite testes rápidos sem runtime da
 Cloudflare.
 
-### Scripts npm (Proposta)
+### Scripts npm
 
 | Script | Função |
 | --- | --- |

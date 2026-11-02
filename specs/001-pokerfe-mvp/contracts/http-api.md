@@ -3,7 +3,8 @@
 **Feature**: `001-pokerfe-mvp` | **Data**: 2026-11-02 | **Spec**: [../spec.md](../spec.md)
 
 Os caminhos `POST /api/rooms` e `/api/rooms/:id/ws` constam no documento de produto (**Aprovado**).
-Corpos, códigos de status e formato de erro são **Proposta** até a aprovação do plano.
+Corpos, códigos de status e formato de erro foram **aprovados com o plano em 2026-11-02**. Os corpos
+são validados com schemas Zod compartilhados em `src/shared/` (research R-07).
 
 Formato de erro comum (JSON, `Content-Type: application/json; charset=utf-8`):
 

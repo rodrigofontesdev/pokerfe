@@ -4,7 +4,7 @@
 
 Os dados de cada sala vivem no SQLite do Durable Object `Room` daquela sala (research R-01).
 Campos e tabelas marcados com **(documento)** constam no documento de produto; os demais são
-**Proposta** e só valem depois da aprovação do plano.
+foram aprovados com o plano em 2026-11-02.
 
 ## Tabela `room` (uma linha)
 
@@ -14,7 +14,7 @@ Campos e tabelas marcados com **(documento)** constam no documento de produto; o
 | `deck_type` | TEXT NOT NULL | (documento) `points` ou `time` (FR-001, FR-013) |
 | `created_at` | INTEGER NOT NULL | (documento) epoch em ms |
 | `last_activity_at` | INTEGER NOT NULL | (documento) epoch em ms; atualizado na criação, em cada voto e em cada nova rodada (FR-023) |
-| `facilitator_token_hash` | TEXT NOT NULL | (documento) SHA-256 em hexadecimal do token (R-06, Proposta quanto ao algoritmo) |
+| `facilitator_token_hash` | TEXT NOT NULL | (documento) SHA-256 em hexadecimal do token (R-06) |
 | `current_round` | INTEGER NOT NULL | (documento) número da rodada atual, começa em 1 |
 
 A existência da linha `room` indica que a sala existe. Sem ela, qualquer acesso responde "sala
@@ -25,10 +25,10 @@ não encontrada ou expirada" (FR-007).
 | Campo | Tipo SQLite | Regra |
 | --- | --- | --- |
 | `session_id` | TEXT PRIMARY KEY | (documento) gerado no navegador (R-06); segredo, nunca enviado a outros participantes |
-| `participant_id` | TEXT NOT NULL UNIQUE | Proposta: ID público aleatório (128 bits, base62) gerado pelo servidor no primeiro `join`; é o único identificador exibido aos demais e usado em `set_observer` |
+| `participant_id` | TEXT NOT NULL UNIQUE | ID público aleatório (128 bits, base62) gerado pelo servidor no primeiro `join`; é o único identificador exibido aos demais e usado em `set_observer` |
 | `display_name` | TEXT NOT NULL | (documento) 1 a 45 caracteres após remover espaços nas pontas (FR-004, FR-008) |
 | `avatar_id` | TEXT NULL | (documento) ID da lista fixa de avatares ou NULL (FR-005) |
-| `is_facilitator` | INTEGER NOT NULL DEFAULT 0 | Proposta: 1 para quem entrou com o token válido; o facilitador não vota (FR-011) |
+| `is_facilitator` | INTEGER NOT NULL DEFAULT 0 | 1 para quem entrou com o token válido; o facilitador não vota (FR-011) |
 | `is_observer` | INTEGER NOT NULL DEFAULT 0 | (documento) alterado só pelo facilitador; nunca 1 para o facilitador (FR-010) |
 | `connected` | INTEGER NOT NULL DEFAULT 0 | (documento) 1 enquanto houver ao menos uma conexão aberta com esse `session_id` |
 | `last_seen_at` | INTEGER NOT NULL | (documento) epoch em ms da última mensagem ou conexão |
@@ -41,7 +41,7 @@ não encontrada ou expirada" (FR-007).
 | `title` | TEXT NULL | (documento) 0 a 250 caracteres; vazio é gravado como NULL (FR-008, FR-017) |
 | `status` | TEXT NOT NULL | (documento) `voting`, `revealed` ou `archived` |
 | `median` | REAL NULL | (documento) calculada na revelação (FR-014) |
-| `mode` | TEXT NULL | (documento, tipo Proposta) array JSON com uma ou mais modas; `[]` quando "Sem moda" |
+| `mode` | TEXT NULL | (documento) array JSON com uma ou mais modas; `[]` quando "Sem moda" |
 | `revealed_at` | INTEGER NULL | (documento) epoch em ms |
 
 ## Tabela `votes`
@@ -53,7 +53,7 @@ não encontrada ou expirada" (FR-007).
 | `card` | TEXT NOT NULL | (documento) valor exatamente igual a uma carta do baralho da sala (FR-013) |
 
 Chave primária: (`round_number`, `session_id`) — um voto por participante por rodada; trocar o
-voto substitui a linha (FR-015). Proposta.
+voto substitui a linha (FR-015).
 
 ## Transições de estado da rodada
 

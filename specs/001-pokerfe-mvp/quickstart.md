@@ -2,13 +2,13 @@
 
 **Feature**: `001-pokerfe-mvp` | **Data**: 2026-11-02
 
-Guia para provar que o MVP funciona de ponta a ponta. Os nomes dos scripts npm abaixo são
-**Proposta** do plano (ver [plan.md](./plan.md), "Scripts npm") e passam a valer quando a tarefa de
+Guia para provar que o MVP funciona de ponta a ponta. Os nomes dos scripts npm abaixo foram
+aprovados com o plano (ver [plan.md](./plan.md), "Scripts npm") e passam a existir quando a tarefa de
 fundação do projeto os criar.
 
 ## Pré-requisitos
 
-- Node.js 22 ou superior e npm (research R-02).
+- Node.js LTS ativo (26) e npm (research R-02).
 - Navegadores do Playwright instalados (`npx playwright install`).
 - Para deploy manual: conta Cloudflare do responsável pelo produto e Wrangler autenticado
   (`npx wrangler login`). O deploy publica em `*.workers.dev` (D-02).

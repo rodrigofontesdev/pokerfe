@@ -4,7 +4,7 @@
 
 **Created**: 2026-11-02
 
-**Status**: Draft
+**Status**: Approved (2026-11-02)
 
 **Input**: User description: "MVP do Pokerfé, aplicação web de planning poker sem login para um time
 de PO/PM, engenheiros e QAs, conforme o documento de produto Pokerfé aprovado em 2026-11-02."

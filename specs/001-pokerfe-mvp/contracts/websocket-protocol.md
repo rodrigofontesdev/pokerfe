@@ -4,7 +4,8 @@
 
 Os nomes de mensagem `join`, `vote`, `set_observer`, `set_title`, `reveal`, `new_round`,
 `room_state` e `error` constam no documento de produto (**Aprovado**). Campos, validações,
-códigos de erro e códigos de fechamento são **Proposta** até a aprovação do plano.
+códigos de erro e códigos de fechamento foram **aprovados com o plano em 2026-11-02**. Cada mensagem
+é validada com um schema Zod compartilhado em `src/shared/` (research R-07).
 
 Todas as mensagens são texto JSON com o campo `type`. Mensagem que não for JSON válido, ou com
 `type` desconhecido, recebe `error` com `code: "invalid_message"` e a conexão continua aberta.
@@ -60,7 +61,7 @@ Alterna votante ⇄ observador de outro participante (FR-010). Com `observer: tr
 ```
 
 `title`: 0 a 250 caracteres após remover espaços nas pontas; vazio limpa o título (FR-008,
-FR-017). Permitido com a rodada em `voting` (Proposta). Erros: `forbidden`, `validation_error`,
+FR-017). Permitido com a rodada em `voting`. Erros: `forbidden`, `validation_error`,
 `round_not_voting`.
 
 ### `reveal` (facilitador)
