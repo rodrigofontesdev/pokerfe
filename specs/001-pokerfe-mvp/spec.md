@@ -9,9 +9,12 @@
 **Input**: User description: "MVP do Pokerfé, aplicação web de planning poker sem login para um time
 de PO/PM, engenheiros e QAs, conforme o documento de produto Pokerfé aprovado em 2026-11-02."
 
-**Fonte**: documento de produto "Pokerfé: MVP de planning poker" (export de 2026-11-02, SHA-256
-`2ade266d81bd888ddbde6376915483070a77498e002bcf239d009455b9f7b915`). Os identificadores US01–US11
-abaixo são os mesmos do documento.
+**Fonte**: documento de produto "Pokerfé: MVP de planning poker", publicado em
+[Gist 635dca41](https://gist.github.com/rodrigofontesdev/635dca41cf757b6318f281c9b3e4d98c)
+(arquivo `pokerfe-mvp.md`, SHA-256
+`2ade266d81bd888ddbde6376915483070a77498e002bcf239d009455b9f7b915`, conferido em 2026-11-02).
+Os identificadores US01–US11 abaixo são os mesmos do documento. Decisões tomadas depois desse
+snapshot estão na seção Clarifications e prevalecem sobre ele (por exemplo, D-01).
 
 ## Clarifications
 
