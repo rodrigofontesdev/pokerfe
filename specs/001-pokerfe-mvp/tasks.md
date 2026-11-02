@@ -298,7 +298,7 @@ histórias US01…US11 da spec.
 
 **Purpose**: critérios de sucesso transversais e documentação.
 
-- [ ] T076 [P] Configurar projetos do Playwright em `playwright.config.ts` para Chromium, Firefox, WebKit e uma viewport de celular, e rodar a suíte e2e em todos (SC-004)
+- [ ] T076 [P] Configurar projetos do Playwright em `playwright.config.ts` para Chromium, Firefox e WebKit com viewport de desktop de 1024 × 768 px (largura mínima suportada), e rodar a suíte e2e em todos (SC-004)
 - [ ] T077 [P] Revisão de acessibilidade em `src/client/components/`: navegação por teclado nas cartas e ações do facilitador e contraste AA; registrar o resultado em `tests/e2e/accessibility.spec.ts` com verificações de foco e teclado (SC-005)
 - [ ] T078 Teste e2e de carga de referência em `tests/e2e/ten-participants.spec.ts`: 10 participantes simultâneos concluem votar, revelar e nova rodada sem erro, medindo que um voto aparece para os demais em menos de 500 ms (SC-001, SC-003)
 - [ ] T079 [P] Criar `README.md` com objetivo, stack, comandos do `quickstart.md`, secrets do deploy (D-03) e links para `specs/001-pokerfe-mvp/`

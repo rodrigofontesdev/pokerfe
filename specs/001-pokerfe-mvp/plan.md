@@ -33,7 +33,8 @@ Tailwind CSS 4 com `@tailwindcss/vite`; Base UI (`@base-ui/react`) 1.x; Zod 4;
 Durable Object (Aprovado, R-03).
 
 **Target Platform**: Cloudflare Workers, plano gratuito (Aprovado); navegadores: 2 últimas versões
-de Chrome, Edge, Firefox e Safari, com layout funcional em celular (Aprovado, SC-004).
+de Chrome, Edge, Firefox e Safari em desktop e notebook, com largura mínima de 1024 px; tablet e
+celular fora do escopo (Aprovado, SC-004).
 
 **Project Type**: aplicação web (SPA + Worker em um único pacote e um único deploy).
 

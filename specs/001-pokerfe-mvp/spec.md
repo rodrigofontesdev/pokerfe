@@ -52,6 +52,8 @@ snapshot estão na seção Clarifications e prevalecem sobre ele (por exemplo, D
 - Q: Haverá domínio próprio? → A: Não; a aplicação usa o subdomínio `workers.dev` da conta
   Cloudflare (D-02).
 - Q: O deploy automático via GitHub Actions está autorizado? → A: Sim (D-03).
+- Q: Quais dispositivos a interface deve atender? → A: Apenas desktop e notebook, com largura
+  mínima de 1024 px; tablet e celular ficam fora do escopo.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -399,8 +401,8 @@ expirada e ver a mensagem.
   quando a rede volta.
 - **SC-003**: Uma sala com 10 participantes simultâneos conclui uma rodada completa (votar,
   revelar, nova rodada) sem erros nem atrasos acima do SC-001.
-- **SC-004**: A ferramenta funciona nas 2 últimas versões de Chrome, Edge, Firefox e Safari, e o
-  layout é funcional em celular.
+- **SC-004**: A ferramenta funciona nas 2 últimas versões de Chrome, Edge, Firefox e Safari em
+  desktop e notebook, com layout funcional a partir de 1024 px de largura.
 - **SC-005**: As cartas são navegáveis por teclado e têm contraste mínimo AA.
 - **SC-006**: O custo de infraestrutura é de R$ 0/mês dentro do uso esperado do time.
 - **SC-007**: 100% das plannings do time passam a rodar no Pokerfé.
@@ -414,6 +416,7 @@ expirada e ver a mensagem.
   foi aceito para o MVP.
 - Login, contas, notificações e e-mail, integrações (Jira, Azure DevOps, Linear), baralhos
   personalizados, avatar personalizado ou foto, revelação automática, timer, chat, exportação do
-  histórico, reestimar rodada revelada e limite de criação de salas por IP estão fora do escopo.
+  histórico, reestimar rodada revelada, limite de criação de salas por IP e layout para tablet e celular
+  (larguras abaixo de 1024 px) estão fora do escopo.
 - Textos de interface não definidos nesta spec podem ser redigidos em pt-BR durante a
   implementação, sem criar regras novas.
