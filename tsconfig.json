@@ -10,7 +10,15 @@
     "skipLibCheck": true,
     "isolatedModules": true,
     "resolveJsonModule": true,
-    "types": ["@cloudflare/workers-types", "vite/client"]
+    "allowImportingTsExtensions": true,
+    "types": ["@cloudflare/workers-types", "vite/client"],
+    "paths": {
+      "@domain/*": ["./src/domain/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@room/*": ["./src/room/*"],
+      "@worker/*": ["./src/worker/*"],
+      "@client/*": ["./src/client/*"]
+    }
   },
-  "include": ["src", "tests", "*.config.ts"]
+  "include": ["src", "tests", "*.config.ts", "aliases.ts"]
 }

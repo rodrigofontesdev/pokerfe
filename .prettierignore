@@ -1,0 +1,8 @@
+dist/
+.wrangler/
+test-results/
+playwright-report/
+package-lock.json
+specs/
+.specify/
+.claude/
