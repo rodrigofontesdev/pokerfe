@@ -159,3 +159,29 @@ Versões consultadas no registro npm em 2026-11-02.
   do arquivo sem extensão); o servidor aceita apenas IDs da lista ou ausência de avatar.
   **Status: formato SVG e placeholder Aprovados; organização dos arquivos é Proposta; a lista de
   animais é Pendente (definida com o responsável pelo produto na tarefa de avatares).**
+
+## R-14 Ferramentas de desenvolvimento e aliases
+
+- **Decision**: adotar ESLint, Prettier, Husky e lint-staged. **Status: Aprovada (D-04,
+  2026-11-03).**
+- **Decision**: o hook de pré-commit executa somente lint e formatação nos arquivos em stage, sem
+  testes nem `typecheck`. **Status: Aprovada (D-05, 2026-11-03).**
+- **Decision**: aliases de importação por pasta de `src/`. **Status: Aprovada (D-06, 2026-11-03);
+  os nomes `@domain`, `@shared`, `@room`, `@worker` e `@client` são Proposta.**
+- **Decision**: ESLint com flat config (`eslint.config.js`) usando `@eslint/js` (recommended),
+  `typescript-eslint` (recommended), `eslint-plugin-react-hooks` (recommended, só em
+  `src/client/`) e `eslint-config-prettier` por último; Prettier com os padrões da ferramenta
+  (`.prettierrc.json` vazio); Husky 9 com `prepare: "husky"`; lint-staged configurado em
+  `package.json`. **Status: Proposta** (o responsável aprovou as ferramentas, não o conjunto de
+  regras).
+- **Decision**: o Prettier ignora `specs/`, `.specify/` e `.claude/`, para não reformatar os
+  documentos de especificação referenciados por links fixados nas issues. **Status: Proposta.**
+- **Incompatibilidade verificada em 2026-11-03**: a versão estável mais recente do `typescript` é
+  7.0.2, mas `typescript-eslint` 8.72.1 declara `typescript >=4.8.4 <6.1.0` (a última linha 6.x é a
+  6.0.3). Com o `typescript` 7.x instalado, o `npm install` do `typescript-eslint` falha por
+  conflito de peer dependency. Opções:
+  - A) fixar `typescript` em `~6.0.3` (compatível, linha estável anterior);
+  - B) manter `typescript` 7.x e adiar o ESLint até o `typescript-eslint` suportá-lo;
+  - C) manter `typescript` 7.x e instalar com `--legacy-peer-deps` (não recomendado: suporte não
+    declarado).
+  **Status: Pendente — decisão do responsável pelo produto.** T085 está escrita para a opção A.
