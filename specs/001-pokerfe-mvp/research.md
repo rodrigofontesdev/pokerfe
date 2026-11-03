@@ -184,4 +184,7 @@ Versões consultadas no registro npm em 2026-11-02.
   - B) manter `typescript` 7.x e adiar o ESLint até o `typescript-eslint` suportá-lo;
   - C) manter `typescript` 7.x e instalar com `--legacy-peer-deps` (não recomendado: suporte não
     declarado).
-  **Status: Pendente — decisão do responsável pelo produto.** T085 está escrita para a opção A.
+  **Status: Aprovada — opção A (2026-11-03).** `typescript` fixado em `~6.0.3`; rever quando o
+  `typescript-eslint` declarar suporte ao `typescript` 7.x.
+- **Decision**: o CI (T010) não executa `lint` nem `format:check`; esses comandos rodam no
+  pré-commit via lint-staged (D-05). **Status: Aprovada (2026-11-03).**

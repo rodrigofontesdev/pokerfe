@@ -26,7 +26,7 @@ desenvolvimento, build e CI (Aprovado — research R-02).
 Tailwind CSS 4 com `@tailwindcss/vite`; Base UI (`@base-ui/react`) 1.x; Zod 4;
 `@cloudflare/workers-types` (Aprovado em 2026-11-02 — research R-02, R-07, R-08).
 
-**Developer Tooling** (Aprovado em 2026-11-03 — D-04 a D-06, research R-14): ESLint com flat config, Prettier, Husky e lint-staged. Conjunto de pacotes e regras (`@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-config-prettier`) e fixação do `typescript` na linha 6.0.x são **Proposta** a aprovar na revisão (R-14).
+**Developer Tooling** (Aprovado em 2026-11-03 — D-04 a D-06, research R-14): ESLint com flat config, Prettier, Husky e lint-staged. Conjunto de pacotes e regras (`@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-config-prettier`) são **Proposta** a aprovar na revisão (R-14). O `typescript` fica fixado em `~6.0.3` (Aprovado em 2026-11-03, R-14), porque o `typescript-eslint` não suporta a 7.x.
 
 **Storage**: SQLite do Durable Object de cada sala (Aprovado, R-01); ver
 [data-model.md](./data-model.md).
@@ -159,10 +159,11 @@ Cloudflare.
 | D-04 | (2026-11-03) Adotar ESLint, Prettier, Husky e lint-staged | scripts `lint`, `format`, `format:check`; hook de pré-commit; tasks T085–T092 (Phase 15) |
 | D-05 | (2026-11-03) O hook de pré-commit executa somente lint e formatação | sem testes nem `typecheck` no hook |
 | D-06 | (2026-11-03) Aliases de importação por pasta | `@domain`, `@shared`, `@room`, `@worker`, `@client` (nomes: Proposta) |
+| D-07 | (2026-11-03) `typescript` fixado em `~6.0.3` | compatível com `typescript-eslint` (R-14, opção A) |
+| D-08 | (2026-11-03) CI sem `lint` nem `format:check` | os comandos rodam no pré-commit via lint-staged |
 
-Pendências remanescentes: a lista final de avatares de animais, decidida com o responsável pelo
-produto durante a tarefa de avatares; e a versão do `typescript` compatível com o `typescript-eslint`
-(research R-14, decisão aberta).
+Pendência remanescente: a lista final de avatares de animais, decidida com o responsável pelo
+produto durante a tarefa de avatares.
 
 ## Complexity Tracking
 
