@@ -36,7 +36,7 @@ histórias US01…US11 da spec.
 - [X] T007 [P] Criar `playwright.config.ts` com um projeto `e2e` (`testDir: "tests/e2e"`, `webServer` iniciando `npm run dev`) e um projeto `smoke` (`testDir: "tests/smoke"`, `baseURL` lido de `SMOKE_BASE_URL`, sem `webServer` quando a variável estiver definida), e fazer `test:e2e` e `test:smoke` rodarem cada um só o seu projeto
 - [X] T008 [P] Criar `index.html`, `src/client/main.tsx` (renderiza um componente raiz vazio) e `src/client/styles.css` com `@import "tailwindcss";`
 - [X] T009 [P] Criar `.gitignore` com `node_modules/`, `dist/`, `.wrangler/`, `test-results/`, `playwright-report/` e `.specify/feature.json`
-- [ ] T010 Criar `.github/workflows/deploy.yml`: em `pull_request` e `push` na `main`, rodar `npm ci`, `npm run typecheck`, `npm test`, instalar navegadores do Playwright e `npm run test:e2e`; somente em `push` na `main` e após os testes, rodar `npm run build` e `cloudflare/wrangler-action@v4` com `apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}` e `accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}` (D-03); Node via `.nvmrc`; o passo de smoke test pós-deploy é adicionado em T083
+- [X] T010 Criar `.github/workflows/deploy.yml`: em `pull_request` e `push` na `main`, rodar `npm ci`, `npm run typecheck`, `npm test`, instalar navegadores do Playwright e `npm run test:e2e`; somente em `push` na `main` e após os testes, rodar `npm run build` e `cloudflare/wrangler-action@v4` com `apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}` e `accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}` (D-03); Node via `.nvmrc`; o passo de smoke test pós-deploy é adicionado em T083
 
 **Checkpoint**: `npm run dev`, `npm run typecheck`, `npm test` e `npm run build` executam sem erro com o app vazio.
 
