@@ -67,6 +67,8 @@ incluído por pedido do responsável pelo produto em 2026-11-02.
 - Validação de dados: Zod, com schemas compartilhados entre cliente e servidor.
 - Runtime de desenvolvimento e CI: Node.js na versão LTS ativa; gerenciador de pacotes: npm.
 - Testes: Vitest (unitários e integração) e Playwright (ponta a ponta).
+- Qualidade de código: ESLint e Prettier, aplicados no pré-commit por Husky e lint-staged somente
+  para lint e formatação; importações entre pastas de `src/` usam aliases por pasta.
 - Idioma da interface: somente pt-BR.
 
 Origem: documento de produto Pokerfé e decisões do responsável pelo produto em 2026-11-02
@@ -95,4 +97,4 @@ Origem: documento de produto Pokerfé, "Definition of Ready/Done"; decisões de 
   ou seção nova; PATCH para ajustes de redação.
 - Toda revisão de código e de issue DEVE verificar conformidade com os princípios I a V.
 
-**Version**: 1.1.0 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-02
+**Version**: 1.2.0 | **Ratified**: 2026-11-02 | **Last Amended**: 2026-11-03

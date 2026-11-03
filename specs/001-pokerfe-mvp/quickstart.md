@@ -22,6 +22,8 @@ fundação do projeto os criar.
 | Instalar | `npm install` | dependências instaladas sem erro |
 | Rodar local | `npm run dev` | Vite + Worker + Durable Objects locais respondendo na URL exibida |
 | Checar tipos | `npm run typecheck` | zero erros de TypeScript |
+| Lint | `npm run lint` | zero erros do ESLint |
+| Formatação | `npm run format:check` | zero arquivos fora do padrão do Prettier (`npm run format` corrige) |
 | Testes unitários e de integração | `npm test` | todos os testes do Vitest aprovados |
 | Testes de ponta a ponta | `npm run test:e2e` | todos os testes do Playwright aprovados |
 | Smoke test | `SMOKE_BASE_URL=<url publicada> npm run test:smoke` | as 4 verificações do smoke test aprovadas em menos de 1 minuto (research R-03) |

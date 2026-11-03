@@ -310,12 +310,30 @@ histórias US01…US11 da spec.
 
 ---
 
+## Phase 15: Developer Tooling (Priority: base — executar após a Phase 1 e antes da Phase 2)
+
+**Purpose**: lint, formatação, hook de pré-commit e aliases de importação (decisões D-04, D-05 e D-06; research R-14), instalados antes do código das demais fases para que ele nasça formatado e com aliases.
+
+- [ ] T085 Instalar com npm, como dependências de desenvolvimento, `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-config-prettier`, `prettier`, `husky` e `lint-staged` nas versões estáveis mais recentes compatíveis entre si, e fixar `typescript` em `~6.0.3` porque o `typescript-eslint` declara suporte a `<6.1.0` (research R-14, opção A); atualizar `package-lock.json`; NÃO usar `--legacy-peer-deps`
+- [ ] T086 [P] Criar `eslint.config.js` (flat config) com `@eslint/js` recommended e `typescript-eslint` recommended para `**/*.{ts,tsx,js}`, `eslint-plugin-react-hooks` recommended somente em `src/client/**/*.{ts,tsx}` e `eslint-config-prettier` por último; ignorar `dist/`, `.wrangler/`, `test-results/`, `playwright-report/` e `node_modules/`; sem regras adicionais além dessas
+- [ ] T087 [P] Criar `.prettierrc.json` contendo `{}` (padrões do Prettier, sem opções customizadas) e `.prettierignore` com `dist/`, `.wrangler/`, `test-results/`, `playwright-report/`, `package-lock.json`, `specs/`, `.specify/` e `.claude/`
+- [ ] T088 Adicionar a `package.json` os scripts `lint` (`eslint .`), `format` (`prettier --write .`) e `format:check` (`prettier --check .`), conforme plan.md "Scripts npm"
+- [ ] T089 Configurar o Husky 9: script `prepare` com `husky` em `package.json`, hook `.husky/pre-commit` executando `npx lint-staged`, e chave `lint-staged` em `package.json` com `eslint --fix` e `prettier --write` para `*.{ts,tsx,js}` e `prettier --write` para `*.{json,jsonc,css,html,md,yml,yaml}`; o hook NÃO executa testes nem `typecheck` (D-05); `npm ci` precisa continuar funcionando no CI
+- [ ] T090 [P] Criar `aliases.ts` na raiz exportando o mapa `@domain`, `@shared`, `@room`, `@worker` e `@client` → `src/<pasta>`, e usá-lo em `resolve.alias` de `vite.config.ts` (T004) e nos projetos `unit` e `integration` de `vitest.config.ts` (T006); declarar os mesmos cinco aliases em `compilerOptions.paths` de `tsconfig.json` (T003, padrão `@domain/*` → `src/domain/*`); sem dependências novas (por exemplo, sem `vite-tsconfig-paths`)
+- [ ] T091 Criar `tests/unit/tooling/aliases.test.ts` que lê `tsconfig.json` e `aliases.ts` e verifica que os cinco aliases existem, apontam para pastas existentes de `src/` e são idênticos nos dois lugares (depende de T090)
+- [ ] T092 Executar `npm run format` uma vez nos arquivos criados em T001–T009 e T085–T091 (commit separado `style: formata o código existente`) e confirmar `npm run lint`, `npm run format:check`, `npm run typecheck`, `npm test` e `npm run build` com código de saída 0 (depende de T085–T091)
+
+**Checkpoint**: um commit com erro de lint é corrigido ou bloqueado pelo hook; `npm run lint` e `npm run format:check` passam; os aliases resolvem em TypeScript, Vite e Vitest.
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
 
 - **Setup (Phase 1)**: sem dependências. T010 (CI/deploy) depende de T001–T009 e, para o job de deploy funcionar, dos secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` cadastrados pelo responsável pelo produto.
-- **Foundational (Phase 2)**: depende do Setup; bloqueia todas as histórias.
+- **Developer Tooling (Phase 15)**: depende de T001–T009 (Phase 1) e deve ser concluída antes da Phase 2, para que o código das demais fases nasça com aliases e formatação. Não depende de T010 (CI). T085 antecede T086–T089; T090 antecede T091; T092 é a última.
+- **Foundational (Phase 2)**: depende do Setup e da Phase 15; bloqueia todas as histórias.
 - **US01 (Phase 3)**: depende da Phase 2. T027 (avatares) exige resposta do responsável pelo produto antes de começar.
 - **Ordem de execução das histórias** (dependências reais entre os cenários de aceite): US01 → US03 → US02 → US05 → US04 → US06 → US07 → US08 → US09 → US10 → US11.
   - US03 (Phase 4) depende de US01: monta presença e lista de participantes; o cenário "vejo que ele votou" é concluído na US05 (T043).
@@ -338,6 +356,7 @@ histórias US01…US11 da spec.
 ### Parallel Opportunities
 
 - Setup: T003–T009 em paralelo.
+- Developer Tooling: T086, T087 e T090 em paralelo após T085 (T090 não depende de T085).
 - Foundational: T011, T012, T013, T015, T016, T020, T021, T023 em paralelo.
 - Testes [P] de cada história em paralelo.
 - As histórias seguem a ordem acima; o paralelismo está dentro de cada história (testes [P]) e entre Setup/Foundational.

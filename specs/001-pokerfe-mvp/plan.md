@@ -26,6 +26,8 @@ desenvolvimento, build e CI (Aprovado — research R-02).
 Tailwind CSS 4 com `@tailwindcss/vite`; Base UI (`@base-ui/react`) 1.x; Zod 4;
 `@cloudflare/workers-types` (Aprovado em 2026-11-02 — research R-02, R-07, R-08).
 
+**Developer Tooling** (Aprovado em 2026-11-03 — D-04 a D-06, research R-14): ESLint com flat config, Prettier, Husky e lint-staged. Conjunto de pacotes e regras (`@eslint/js`, `typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-config-prettier`) são **Proposta** a aprovar na revisão (R-14). O `typescript` fica fixado em `~6.0.3` (Aprovado em 2026-11-03, R-14), porque o `typescript-eslint` não suporta a 7.x.
+
 **Storage**: SQLite do Durable Object de cada sala (Aprovado, R-01); ver
 [data-model.md](./data-model.md).
 
@@ -111,14 +113,21 @@ tests/
 └── smoke/               # Playwright: sanidade do ambiente publicado após cada deploy (R-03)
 
 index.html
+aliases.ts               # mapa único dos aliases de importação (D-06), usado por vite.config.ts e vitest.config.ts
 vite.config.ts
 vitest.config.ts         # ou projetos separados para unit e integração
+eslint.config.js         # D-04: flat config
+.prettierrc.json         # D-04: padrões do Prettier, sem opções customizadas
+.prettierignore
+.husky/pre-commit        # D-04, D-05: executa lint-staged
 playwright.config.ts
 wrangler.jsonc
 .github/workflows/deploy.yml  # D-03: testes + deploy com cloudflare/wrangler-action@v4
 tsconfig.json
 package.json
 ```
+
+**Convenção de imports (D-06)**: importações entre pastas de `src/` usam os aliases `@domain/*`, `@shared/*`, `@room/*`, `@worker/*` e `@client/*`, que apontam para `src/<pasta>/*`; dentro da mesma pasta, usam-se caminhos relativos. Os aliases são declarados em `tsconfig.json` (`paths`), `vite.config.ts` e `vitest.config.ts` a partir de `aliases.ts`. Os nomes dos aliases são **Proposta** (a decisão aprovada é "um alias por pasta").
 
 **Structure Decision**: pacote único, porque SPA e Worker têm um único deploy (R-01). O domínio
 isolado em `src/domain/` cumpre a constitution IV e permite testes rápidos sem runtime da
@@ -135,6 +144,10 @@ Cloudflare.
 | `test:e2e` | Playwright |
 | `test:smoke` | Playwright em `tests/smoke/` contra a URL em `SMOKE_BASE_URL` (padrão: servidor local) |
 | `deploy` | build e `wrangler deploy` |
+| `lint` | ESLint em todo o projeto (D-04) |
+| `format` | Prettier grava a formatação (D-04) |
+| `format:check` | Prettier só verifica, sem gravar (D-04) |
+| `prepare` | `husky` — instala o hook de pré-commit ao rodar `npm install` (D-04) |
 
 ## Decisões registradas
 
@@ -143,6 +156,11 @@ Cloudflare.
 | D-01 | Sem limite de criação de salas por IP no MVP | FR-025 removido; sem resposta 429 |
 | D-02 | Sem domínio próprio | produção em `*.workers.dev`; nenhuma configuração de rota ou domínio |
 | D-03 | Deploy automático autorizado | workflow GitHub Actions com `cloudflare/wrangler-action@v4`; o responsável cadastra os secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` |
+| D-04 | (2026-11-03) Adotar ESLint, Prettier, Husky e lint-staged | scripts `lint`, `format`, `format:check`; hook de pré-commit; tasks T085–T092 (Phase 15) |
+| D-05 | (2026-11-03) O hook de pré-commit executa somente lint e formatação | sem testes nem `typecheck` no hook |
+| D-06 | (2026-11-03) Aliases de importação por pasta | `@domain`, `@shared`, `@room`, `@worker`, `@client` (nomes: Proposta) |
+| D-07 | (2026-11-03) `typescript` fixado em `~6.0.3` | compatível com `typescript-eslint` (R-14, opção A) |
+| D-08 | (2026-11-03) CI sem `lint` nem `format:check` | os comandos rodam no pré-commit via lint-staged |
 
 Pendência remanescente: a lista final de avatares de animais, decidida com o responsável pelo
 produto durante a tarefa de avatares.
