@@ -155,10 +155,15 @@ Versões consultadas no registro npm em 2026-11-02.
 
 ## R-13 Avatares
 
-- **Decision**: arquivos SVG em `src/client/assets/avatars/`, identificados por `avatarId` (o nome
-  do arquivo sem extensão); o servidor aceita apenas IDs da lista ou ausência de avatar.
-  **Status: formato SVG e placeholder Aprovados; organização dos arquivos é Proposta; a lista de
-  animais é Pendente (definida com o responsável pelo produto na tarefa de avatares).**
+- **Decision**: arquivos PNG de 128 × 128 px em `src/client/assets/avatars/`, identificados por
+  `avatarId` (o nome do arquivo em inglês, sem extensão: `eagle`, `elephant`, `fox`, `giraffe`,
+  `gorilla`, `horse`, `lion`, `meerkat`, `panda`, `penguin`, `snake`, `tiger`); o servidor aceita
+  apenas IDs da lista ou ausência de avatar. A exibição é em ordem alfabética do nome em pt-BR.
+  **Status: formato PNG, lista de 12 animais e placeholder Aprovados (D-09, 2026-11-04);
+  organização dos arquivos é Proposta.**
+- **Decision**: os ícones são do pack gratuito Wildlife do Flaticon (criado por Magnific), que
+  exige um link de atribuição por ícone, exibidos em uma tela de Créditos. **Status: Aprovada
+  (D-10, 2026-11-04); caminho da tela e local do link são Proposta.**
 
 ## R-14 Ferramentas de desenvolvimento e aliases
 

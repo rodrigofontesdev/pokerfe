@@ -34,9 +34,11 @@ snapshot estão na seção Clarifications e prevalecem sobre ele (por exemplo, D
 - Q: O que acontece com o botão de revelar se não houver ninguém para votar? → A: Fica bloqueado.
 - Q: Existe prazo para reconectar? → A: Não. Quem cair e voltar no mesmo navegador recupera
   nome, avatar e voto e pode votar se a rodada ainda estiver em votação.
-- Q: Como são os avatares? → A: Lista fixa de animais em SVG; a lista final é definida com o
-  responsável pelo produto na implementação; sem avatar escolhido, usa-se a primeira letra do
-  nome como placeholder.
+- Q: Como são os avatares? → A: Lista fixa de 12 animais em PNG (128 × 128 px) do pack Wildlife
+  do Flaticon, definida com o responsável pelo produto em 2026-11-04; sem avatar escolhido,
+  usa-se a primeira letra do nome como placeholder. (Substitui a decisão anterior de usar SVG.)
+- Q: O uso gratuito dos ícones exige atribuição? → A: Sim, um link por ícone; uma tela de
+  Créditos exibe todas as atribuições em ordem alfabética (FR-028).
 - Q: Recuperar o papel de facilitador em outro navegador faz parte do MVP? → A: Não.
 - Q: O que renova o prazo de 30 dias da sala? → A: Apenas um voto ou uma nova rodada.
 - Q: Idioma e textos de interface? → A: Somente pt-BR; textos não definidos podem ser redigidos
@@ -309,10 +311,11 @@ expirada e ver a mensagem.
   a ação "Copiar link". [US01]
 - **FR-004**: O sistema DEVE permitir entrar na sala pelo link informando nome de exibição
   (obrigatório) e avatar (opcional), sem cadastro nem login. [US02]
-- **FR-005**: O avatar DEVE ser escolhido de uma lista fixa de animais em SVG; avatares podem se
+- **FR-005**: O avatar DEVE ser escolhido de uma lista fixa de animais em PNG; avatares podem se
   repetir entre participantes; sem avatar escolhido, a sala DEVE exibir a primeira letra do nome
-  como placeholder. A lista final de animais é definida com o responsável pelo produto durante a
-  implementação. [US01, US02]
+  como placeholder. A lista, em ordem alfabética (pt-BR), é: Águia, Cavalo, Cobra, Elefante,
+  Girafa, Gorila, Leão, Panda, Pinguim, Raposa, Suricato e Tigre. Onde os avatares são listados
+  (por exemplo, no seletor), a ordem é alfabética. [US01, US02]
 - **FR-006**: O sistema DEVE lembrar nome e avatar no navegador e pré-preenchê-los nas próximas
   entradas, permitindo alterá-los antes de entrar. [US02]
 - **FR-007**: Ao abrir um link de sala inexistente ou expirada, o sistema DEVE exibir "Sala não
@@ -380,6 +383,9 @@ expirada e ver a mensagem.
 - **FR-026**: A interface DEVE estar somente em pt-BR. [Documento, "Idioma"]
 - **FR-027**: O sistema NÃO DEVE coletar dados pessoais além de nome de exibição e avatar.
   [Documento, "Requisitos não funcionais"]
+- **FR-028**: O sistema DEVE ter uma tela de Créditos com a atribuição exigida pelo Flaticon para
+  o uso gratuito dos ícones: um link por avatar, exibidos em ordem alfabética (pt-BR). [Decisão do
+  responsável pelo produto, 2026-11-04]
 
 ### Key Entities *(include if feature involves data)*
 
@@ -409,9 +415,8 @@ expirada e ver a mensagem.
 
 ## Assumptions
 
-- A lista final de avatares de animais (quais animais e seus SVGs) é decidida com o responsável
-  pelo produto no momento da implementação da tarefa correspondente; até lá, nenhuma lista é
-  definitiva.
+- A lista final de avatares de animais foi definida com o responsável pelo produto em 2026-11-04
+  (12 animais, PNG de 128 × 128 px do pack Wildlife do Flaticon, criado por Magnific; ver FR-005).
 - O facilitador que perder o navegador perde o papel; o time pode criar uma nova sala. Esse risco
   foi aceito para o MVP.
 - Login, contas, notificações e e-mail, integrações (Jira, Azure DevOps, Linear), baralhos

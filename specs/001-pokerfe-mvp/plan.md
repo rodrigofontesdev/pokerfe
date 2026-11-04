@@ -97,14 +97,14 @@ src/
 │   └── Room.ts          # Durable Object da sala: SQLite, hibernação de WebSocket, broadcast, Alarm
 └── client/
     ├── main.tsx
-    ├── router.tsx       # TanStack Router: rotas / e /r/$roomId (definidas em código)
+    ├── router.tsx       # TanStack Router: rotas /, /r/$roomId e a tela de Créditos (definidas em código; caminho da tela: Proposta)
     ├── routes/          # telas Home e Room
     ├── components/      # Base UI + Tailwind: cartas, participantes, painel do facilitador, resultado, histórico
     ├── styles.css       # entrada do Tailwind CSS 4
     ├── format.ts        # formatação pt-BR de mediana e moda (research R-12)
     ├── realtime/        # conexão WebSocket, reconexão (R-09), estado local
     ├── storage/         # localStorage: sessionId, nome e avatar lembrados (FR-006), token por sala
-    └── assets/avatars/  # SVGs de animais (lista pendente com o responsável pelo produto)
+    └── assets/avatars/  # PNGs de animais, 128 × 128 px (pack Wildlife do Flaticon; FR-005)
 
 tests/
 ├── unit/                # Vitest, ambiente Node: src/domain e src/shared
@@ -161,9 +161,10 @@ Cloudflare.
 | D-06 | (2026-11-03) Aliases de importação por pasta | `@domain`, `@shared`, `@room`, `@worker`, `@client` (nomes: Proposta) |
 | D-07 | (2026-11-03) `typescript` fixado em `~6.0.3` | compatível com `typescript-eslint` (R-14, opção A) |
 | D-08 | (2026-11-03) CI sem `lint` nem `format:check` | os comandos rodam no pré-commit via lint-staged |
+| D-09 | (2026-11-04) Avatares em PNG (128 × 128 px) do pack Wildlife do Flaticon, 12 animais | substitui SVG; T027 e T031 ajustadas; R-13 atualizada |
+| D-10 | (2026-11-04) Tela de Créditos com um link de atribuição por ícone | FR-028; T093 (issue #30) |
 
-Pendência remanescente: a lista final de avatares de animais, decidida com o responsável pelo
-produto durante a tarefa de avatares.
+Pendência remanescente: o caminho da tela de Créditos e o local do link para ela (issue #30).
 
 ## Complexity Tracking
 

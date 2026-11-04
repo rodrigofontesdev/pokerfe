@@ -124,7 +124,7 @@ describe("mensagens", () => {
         {
           participantId: pid,
           displayName: "Ana",
-          avatarId: "raposa",
+          avatarId: "fox",
           isFacilitator: false,
           isObserver: false,
           connected: true,

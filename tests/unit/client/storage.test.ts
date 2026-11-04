@@ -38,8 +38,8 @@ describe("storage local", () => {
   it("persiste perfil e token por sala", () => {
     vi.stubGlobal("localStorage", fakeStorage());
     expect(getProfile()).toBeNull();
-    saveProfile({ displayName: "Ana", avatarId: "raposa" });
-    expect(getProfile()).toEqual({ displayName: "Ana", avatarId: "raposa" });
+    saveProfile({ displayName: "Ana", avatarId: "fox" });
+    expect(getProfile()).toEqual({ displayName: "Ana", avatarId: "fox" });
     saveFacilitatorToken("sala1", "tok");
     expect(getFacilitatorToken("sala1")).toBe("tok");
     expect(getFacilitatorToken("sala2")).toBeNull();
