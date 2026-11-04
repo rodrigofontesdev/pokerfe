@@ -72,7 +72,7 @@ revealed ──(new_round: facilitador)──▶ archived   e cria rodada N+1 em
 
 ## Regras de cálculo (módulo de domínio)
 
-- Valor numérico da carta: o número do rótulo, sem o sufixo `h` no baralho de tempo.
+- Valor numérico da carta: o número do rótulo. Os rótulos do baralho de tempo não levam o sufixo `h`; a interface o acrescenta na apresentação.
 - Mediana: valores ordenados; com quantidade par, média dos dois centrais (FR-014).
 - Moda: valores com a maior contagem quando essa contagem é maior que 1; se nenhum valor se
   repete, nenhuma moda ("Sem moda"); empate exibe todas (FR-014).
