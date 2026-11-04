@@ -21,7 +21,7 @@ snapshot estão na seção Clarifications e prevalecem sobre ele (por exemplo, D
 ### Session 2026-11-02
 
 - Q: Quais valores tem cada baralho? → A: Story points: 0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100.
-  Tempo (horas): 0.5h, 1h, 2h, 3h, 5h, 8h, 12h, 16h, 24h, 40h.
+  Tempo (horas): 0.5, 1, 2, 3, 5, 8, 12, 16, 24, 40 (os rótulos não levam o sufixo `h`; a interface o acrescenta na apresentação).
 - Q: Há revelação automática? → A: Não. O facilitador revela, e o botão só fica liberado quando
   todos os votantes votaram.
 - Q: O que o resultado exibe? → A: Mediana e moda; a média simples não é exibida.
@@ -338,7 +338,7 @@ expirada e ver a mensagem.
   conectados tiverem votado. Enquanto bloqueada, a interface DEVE mostrar quantos votos faltam.
   [US06]
 - **FR-013**: Os baralhos DEVEM ter exatamente estes valores: Story points 0, 0.5, 1, 2, 3, 5, 8,
-  13, 20, 40, 100; Tempo (horas) 0.5h, 1h, 2h, 3h, 5h, 8h, 12h, 16h, 24h, 40h. [US01, US05]
+  13, 20, 40, 100; Tempo (horas) 0.5, 1, 2, 3, 5, 8, 12, 16, 24, 40 (sem o sufixo `h` nos rótulos; a interface o acrescenta na apresentação). [US01, US05]
 - **FR-014**: O resultado revelado DEVE exibir mediana e moda dos votos, sem média simples.
   Mediana com número par de votos é a média dos dois valores centrais. Em empate de moda, todas as
   modas são exibidas; se nenhum valor se repetir, exibe "Sem moda". A distribuição dos votos

@@ -20,23 +20,22 @@ describe("decks", () => {
 
   it("time tem os valores exatos", () => {
     expect([...DECKS.time]).toEqual([
-      "0.5h",
-      "1h",
-      "2h",
-      "3h",
-      "5h",
-      "8h",
-      "12h",
-      "16h",
-      "24h",
-      "40h",
+      "0.5",
+      "1",
+      "2",
+      "3",
+      "5",
+      "8",
+      "12",
+      "16",
+      "24",
+      "40",
     ]);
   });
 
   it("converte rótulo em número", () => {
     expect(cardToNumber("0.5")).toBe(0.5);
     expect(cardToNumber("100")).toBe(100);
-    expect(cardToNumber("0.5h")).toBe(0.5);
-    expect(cardToNumber("40h")).toBe(40);
+    expect(cardToNumber("12")).toBe(12);
   });
 });

@@ -49,7 +49,7 @@ histórias US01…US11 da spec.
 **⚠️ CRITICAL**: nenhuma história começa antes desta fase.
 
 - [X] T011 [P] Criar `src/shared/limits.ts` com `ROOM_NAME_MAX = 250`, `DISPLAY_NAME_MAX = 45`, `ROUND_TITLE_MAX = 250` (FR-008) e `ROOM_TTL_MS = 30 dias` (FR-023)
-- [X] T012 [P] Criar `src/shared/decks.ts` com os baralhos exatos do FR-013 — `points`: `0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100`; `time`: `0.5h, 1h, 2h, 3h, 5h, 8h, 12h, 16h, 24h, 40h` — e a função que converte um rótulo em número (sem o sufixo `h`)
+- [X] T012 [P] Criar `src/shared/decks.ts` com os baralhos exatos do FR-013 — `points`: `0, 0.5, 1, 2, 3, 5, 8, 13, 20, 40, 100`; `time`: `0.5, 1, 2, 3, 5, 8, 12, 16, 24, 40` (sem sufixo `h`; a interface o acrescenta) — e a função que converte um rótulo em número
 - [X] T013 [P] Criar `src/shared/ids.ts` com geração de IDs de 128 bits via `crypto.getRandomValues` codificados em base62 com 22 caracteres e validação do formato (research R-06)
 - [X] T014 Criar `src/shared/protocol.ts` com schemas Zod e tipos inferidos para: corpo e resposta de `POST /api/rooms`, formato de erro HTTP, mensagens cliente→servidor (`join`, `vote`, `set_observer`, `set_title`, `reveal`, `new_round`) e servidor→cliente (`room_state`, `error`), exatamente como em `contracts/http-api.md` e `contracts/websocket-protocol.md`, aplicando trim e os limites de T011 (depende de T011, T012, T013)
 - [X] T015 [P] Criar `src/domain/types.ts` com os tipos de domínio (sala, participante, rodada, voto, estado da rodada `voting`/`revealed`/`archived`) conforme `data-model.md`, sem imports de `cloudflare:*`, DOM ou rede (constitution IV)
@@ -203,7 +203,7 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 7
 
-- [ ] T057 [P] [US7] Testes unitários em `tests/unit/domain/stats.test.ts` com os exemplos da US07: 3, 5, 5, 8 → mediana 5, modas [5]; 3, 3, 8, 8 → mediana 5,5, modas [3, 8]; 2, 3, 5 → mediana 3, modas [] ("Sem moda"); baralho de tempo convertendo `0.5h` em 0,5; distribuição só com cartas que receberam voto, na ordem do baralho — [FR-014]
+- [ ] T057 [P] [US7] Testes unitários em `tests/unit/domain/stats.test.ts` com os exemplos da US07: 3, 5, 5, 8 → mediana 5, modas [5]; 3, 3, 8, 8 → mediana 5,5, modas [3, 8]; 2, 3, 5 → mediana 3, modas [] ("Sem moda"); baralho de tempo convertendo `0.5` em 0,5; distribuição só com cartas que receberam voto, na ordem do baralho — [FR-014]
 - [ ] T058 [P] [US7] Testes unitários em `tests/unit/client/format.test.ts`: mediana 5.5 exibida como "5,5", sufixo `h` no baralho de tempo, `[]` exibido como "Sem moda" — [FR-014]
 - [ ] T059 [P] [US7] Teste e2e em `tests/e2e/result.spec.ts`: revelar os votos 3, 5, 5 e 8 e verificar que todos os participantes veem mediana 5, moda 5 e a distribuição, sem média simples (completa o cenário 3 da US06) — [FR-014, FR-016]
 

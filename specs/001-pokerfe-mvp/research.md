@@ -148,9 +148,9 @@ Versões consultadas no registro npm em 2026-11-02.
 
 ## R-12 Formatação de números
 
-- **Decision**: rótulos das cartas exatamente como na spec (FR-013, por exemplo `0.5` e `0.5h`);
-  mediana exibida em formato pt-BR com vírgula decimal (spec US07: "5,5"), com o sufixo `h` no
-  baralho de tempo. **Status: Aprovada** (spec FR-013 e US07); o sufixo `h` no resultado é
+- **Decision**: rótulos das cartas exatamente como na spec (FR-013, por exemplo `0.5` e `1`; os rótulos do baralho de tempo não levam `h`);
+  mediana exibida em formato pt-BR com vírgula decimal (spec US07: "5,5"), com o sufixo `h`
+  acrescentado só na apresentação do baralho de tempo. **Status: Aprovada** (spec FR-013 e US07); o sufixo `h` no resultado é
   **Proposta**.
 
 ## R-13 Avatares
