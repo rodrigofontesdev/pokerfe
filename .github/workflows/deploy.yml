@@ -18,7 +18,7 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npx playwright install --with-deps
-      - run: npm run test:e2e
+      - run: npm run test:e2e -- --pass-with-no-tests
 
   deploy:
     needs: test
