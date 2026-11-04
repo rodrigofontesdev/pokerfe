@@ -1,0 +1,96 @@
+import {
+  joinMessageSchema,
+  serverMessageSchema,
+  type RoomState,
+} from "@shared/protocol.ts";
+import {
+  getFacilitatorToken,
+  getProfile,
+  getSessionId,
+  type Profile,
+} from "@client/storage/local.ts";
+
+export const ROOM_NOT_FOUND_CLOSE_CODE = 4404;
+
+export type ErrorMessage = Extract<
+  ReturnType<typeof serverMessageSchema.parse>,
+  { type: "error" }
+>;
+
+export function buildWsUrl(
+  roomId: string,
+  loc: { protocol: string; host: string } = location,
+): string {
+  const scheme = loc.protocol === "https:" ? "wss:" : "ws:";
+  return `${scheme}//${loc.host}/api/rooms/${roomId}/ws`;
+}
+
+type SocketLike = {
+  send(data: string): void;
+  close(): void;
+  onopen: ((ev: unknown) => void) | null;
+  onmessage: ((ev: { data: unknown }) => void) | null;
+  onclose: ((ev: { code: number }) => void) | null;
+};
+
+export type SocketFactory = (url: string) => SocketLike;
+
+export type RoomConnectionOptions = {
+  roomId: string;
+  profile?: Profile | null;
+  url?: string;
+  createSocket?: SocketFactory;
+  onState: (state: RoomState) => void;
+  onError: (error: ErrorMessage) => void;
+  onNotFound: () => void;
+  onClose?: (code: number) => void;
+};
+
+export function createRoomConnection(options: RoomConnectionOptions): {
+  close: () => void;
+} {
+  const url = options.url ?? buildWsUrl(options.roomId);
+  const socket = (options.createSocket ?? ((u) => new WebSocket(u)))(url);
+  let closed = false;
+
+  socket.onopen = () => {
+    const profile = options.profile ?? getProfile();
+    const token = getFacilitatorToken(options.roomId);
+    const join = joinMessageSchema.safeParse({
+      type: "join",
+      sessionId: getSessionId(),
+      displayName: profile?.displayName ?? "",
+      avatarId: profile?.avatarId ?? null,
+      ...(token ? { facilitatorToken: token } : {}),
+    });
+    if (join.success) socket.send(JSON.stringify(join.data));
+  };
+
+  socket.onmessage = (event: { data: unknown }) => {
+    if (closed || typeof event.data !== "string") return;
+    let json: unknown;
+    try {
+      json = JSON.parse(event.data);
+    } catch {
+      return;
+    }
+    const parsed = serverMessageSchema.safeParse(json);
+    if (!parsed.success) return;
+    if (parsed.data.type === "room_state") options.onState(parsed.data);
+    else options.onError(parsed.data);
+  };
+
+  socket.onclose = (event: { code: number }) => {
+    if (closed) return;
+    closed = true;
+    if (event.code === ROOM_NOT_FOUND_CLOSE_CODE) options.onNotFound();
+    options.onClose?.(event.code);
+  };
+
+  return {
+    close() {
+      closed = true;
+      socket.close();
+    },
+  };
+}
