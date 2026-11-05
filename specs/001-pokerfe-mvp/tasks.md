@@ -100,13 +100,13 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 3
 
-- [ ] T034 [P] [US3] Testes unitários em `tests/unit/domain/presence.test.ts` para a visão de participantes (`hasVoted` sem valor, papéis, `connected`) — [FR-009]
-- [ ] T035 [P] [US3] Teste de integração em `tests/integration/presence.test.ts`: `connected` vira `false` quando a última conexão de um `sessionId` fecha e `true` ao voltar; papéis e `participantId` corretos para todas as conexões — [FR-009, FR-020]
+- [X] T034 [P] [US3] Testes unitários em `tests/unit/domain/presence.test.ts` para a visão de participantes (`hasVoted` sem valor, papéis, `connected`) — [FR-009]
+- [X] T035 [P] [US3] Teste de integração em `tests/integration/presence.test.ts`: `connected` vira `false` quando a última conexão de um `sessionId` fecha e `true` ao voltar; papéis e `participantId` corretos para todas as conexões — [FR-009, FR-020]
 
 ### Implementation for User Story 3
 
-- [ ] T036 [US3] Implementar em `src/domain/presence.ts` a montagem de `participants` e `you` do `room_state` e, em `src/room/Room.ts`, a atualização de `connected` e `last_seen_at` em `join` e `webSocketClose`, considerando várias conexões do mesmo `sessionId` — [FR-009, FR-020]
-- [ ] T037 [US3] Criar `src/client/components/ParticipantList.tsx` (avatar ou placeholder, nome, papel facilitador/votante/observador, indicador de "votou", estado desconectado) com Tailwind, legível com mais de 10 participantes (FR-024) — [FR-009, FR-024]
+- [X] T036 [US3] Implementar em `src/domain/presence.ts` a montagem de `participants` e `you` do `room_state` e, em `src/room/Room.ts`, a atualização de `connected` e `last_seen_at` em `join` e `webSocketClose`, considerando várias conexões do mesmo `sessionId` — [FR-009, FR-020]
+- [X] T037 [US3] Criar `src/client/components/ParticipantList.tsx` (avatar ou placeholder, nome, papel facilitador/votante/observador, indicador de "votou", estado desconectado) com Tailwind, legível com mais de 10 participantes (FR-024) — [FR-009, FR-024]
 
 **Checkpoint**: presença em tempo real visível para todos.
 
