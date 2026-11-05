@@ -1,5 +1,3 @@
-// Catálogo de avatares (FR-005, research R-13). `id` é o nome do arquivo PNG em
-// `src/client/assets/avatars/` sem extensão. Ordem alfabética do nome em pt-BR.
 export const AVATARS = [
   { id: "eagle", name: "Águia" },
   { id: "horse", name: "Cavalo" },
@@ -27,7 +25,6 @@ export function avatarName(id: AvatarId): string {
   return AVATARS.find((a) => a.id === id)!.name;
 }
 
-// Placeholder quando não há avatar: primeira letra do nome, em maiúscula.
 export function nameInitial(displayName: string): string {
   const first = Array.from(displayName.trim())[0];
   return first ? first.toLocaleUpperCase("pt-BR") : "";
