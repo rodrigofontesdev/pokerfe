@@ -95,7 +95,7 @@ describe("buildPresence", () => {
     ).toBeNull();
   });
 
-  it("mantém todos os participantes, sem limite fixo (FR-024)", () => {
+  it("mantém todos os participantes, sem limite fixo", () => {
     const many = Array.from({ length: 25 }, (_, i) =>
       participant({ sessionId: `s${i}`, participantId: `p${i}` }),
     );
