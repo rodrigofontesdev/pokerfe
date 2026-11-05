@@ -7,6 +7,12 @@ import {
   type ServerMessage,
   clientMessageSchema,
 } from "@shared/protocol.ts";
+import { generateId } from "@shared/ids.ts";
+import { ROOM_TTL_MS } from "@shared/limits.ts";
+import { createInitialRoomState } from "@domain/room.ts";
+import { registerParticipant } from "@domain/participants.ts";
+import type { Participant } from "@domain/types.ts";
+import { constantTimeEqual, sha256Hex } from "./hash.ts";
 import { applySchema } from "./schema.ts";
 
 export const ROOM_NOT_FOUND_CLOSE_CODE = 4404;
@@ -29,6 +35,32 @@ export class Room extends DurableObject<Env> {
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
     ctx.blockConcurrencyWhile(async () => applySchema(ctx.storage.sql));
+  }
+
+  async initialize(input: {
+    name: string;
+    deckType: DeckType;
+    facilitatorTokenHash: string;
+  }): Promise<void> {
+    if (this.roomExists()) throw new Error("room_already_exists");
+    const now = Date.now();
+    const { room, round } = createInitialRoomState({ ...input, now });
+    const sql = this.ctx.storage.sql;
+    sql.exec(
+      "INSERT INTO room (name, deck_type, created_at, last_activity_at, facilitator_token_hash, current_round) VALUES (?, ?, ?, ?, ?, ?)",
+      room.name,
+      room.deckType,
+      room.createdAt,
+      room.lastActivityAt,
+      room.facilitatorTokenHash,
+      room.currentRound,
+    );
+    sql.exec(
+      "INSERT INTO rounds (number, title, status, median, mode, revealed_at) VALUES (?, NULL, ?, NULL, NULL, NULL)",
+      round.number,
+      round.status,
+    );
+    await this.ctx.storage.setAlarm(now + ROOM_TTL_MS);
   }
 
   override async fetch(request: Request): Promise<Response> {
@@ -56,13 +88,79 @@ export class Room extends DurableObject<Env> {
     if (!attachment && message.type !== "join") {
       return this.sendError(ws, "not_joined", "Envie join primeiro");
     }
-    // Os handlers de negócio (join, vote etc.) chegam nas issues das histórias.
+    if (message.type === "join") {
+      return this.handleJoin(ws, message);
+    }
+    // Os demais handlers (vote etc.) chegam nas issues das histórias.
     this.sendError(ws, "invalid_message", "Mensagem não suportada");
   }
 
   override async webSocketClose(ws: WebSocket, code: number): Promise<void> {
     // 1005/1006 não podem ser enviados em um close frame.
     ws.close(code === 1005 || code === 1006 ? 1000 : code);
+  }
+
+  private async handleJoin(
+    ws: WebSocket,
+    message: Extract<ClientMessage, { type: "join" }>,
+  ): Promise<void> {
+    const sql = this.ctx.storage.sql;
+    const room = sql
+      .exec<{ facilitator_token_hash: string }>(
+        "SELECT facilitator_token_hash FROM room",
+      )
+      .toArray()[0];
+    if (!room) return;
+
+    const hasValidToken =
+      message.facilitatorToken !== undefined &&
+      constantTimeEqual(
+        await sha256Hex(message.facilitatorToken),
+        room.facilitator_token_hash,
+      );
+
+    const row = sql
+      .exec<ParticipantRow & { last_seen_at: number }>(
+        "SELECT * FROM participants WHERE session_id = ?",
+        message.sessionId,
+      )
+      .toArray()[0];
+    const existing: Participant | null = row
+      ? {
+          sessionId: row.session_id,
+          participantId: row.participant_id,
+          displayName: row.display_name,
+          avatarId: row.avatar_id,
+          isFacilitator: row.is_facilitator === 1,
+          isObserver: row.is_observer === 1,
+          connected: row.connected === 1,
+          lastSeenAt: row.last_seen_at,
+        }
+      : null;
+
+    const p = registerParticipant({
+      existing,
+      sessionId: message.sessionId,
+      displayName: message.displayName,
+      avatarId: message.avatarId,
+      hasValidFacilitatorToken: hasValidToken,
+      newParticipantId: generateId(),
+      now: Date.now(),
+    });
+    sql.exec(
+      `INSERT INTO participants (session_id, participant_id, display_name, avatar_id, is_facilitator, is_observer, connected, last_seen_at)
+       VALUES (?, ?, ?, ?, ?, ?, 1, ?)
+       ON CONFLICT(session_id) DO UPDATE SET display_name = excluded.display_name, avatar_id = excluded.avatar_id, connected = 1, last_seen_at = excluded.last_seen_at`,
+      p.sessionId,
+      p.participantId,
+      p.displayName,
+      p.avatarId,
+      p.isFacilitator ? 1 : 0,
+      p.isObserver ? 1 : 0,
+      p.lastSeenAt,
+    );
+    ws.serializeAttachment({ sessionId: p.sessionId } satisfies Attachment);
+    this.broadcastRoomState();
   }
 
   /** Envia a cada conexão com `join` feito o `room_state` personalizado. */
