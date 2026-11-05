@@ -54,7 +54,7 @@ function setup() {
   createRoomConnection({
     roomId: id,
     url: "ws://x/api/rooms/ws",
-    profile: { displayName: "Ana", avatarId: "raposa" },
+    profile: { displayName: "Ana", avatarId: "fox" },
     createSocket: factory,
     ...handlers,
   });
@@ -90,7 +90,7 @@ describe("createRoomConnection", () => {
     expect(join).toMatchObject({
       type: "join",
       displayName: "Ana",
-      avatarId: "raposa",
+      avatarId: "fox",
       facilitatorToken: "tok123",
     });
     expect(join.sessionId).toMatch(/^[0-9A-Za-z]{22}$/);

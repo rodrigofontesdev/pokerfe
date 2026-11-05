@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { AVATAR_IDS } from "./avatars.ts";
 import { DECK_TYPES } from "./decks.ts";
 import { isValidId } from "./ids.ts";
 import { DISPLAY_NAME_MAX, ROOM_NAME_MAX, ROUND_TITLE_MAX } from "./limits.ts";
@@ -33,7 +34,7 @@ export const joinMessageSchema = z.object({
   type: z.literal("join"),
   sessionId: id,
   displayName: trimmed(DISPLAY_NAME_MAX),
-  avatarId: z.string().min(1).nullable(),
+  avatarId: z.enum(AVATAR_IDS).nullable(),
   facilitatorToken: z.string().optional(),
 });
 

@@ -80,11 +80,11 @@ histórias US01…US11 da spec.
 
 ### Implementation for User Story 1
 
-- [ ] T027 [US1] Criar o catálogo de avatares: **antes de implementar, perguntar ao responsável pelo produto quais animais compõem a lista final** (spec, Assumptions); adicionar os SVGs em `src/client/assets/avatars/` e exportar a lista de `avatarId` em `src/shared/avatars.ts`, usada pelo schema de `join` e pela interface — [FR-005]
+- [X] T027 [US1] Criar o catálogo de avatares com a lista aprovada pelo responsável pelo produto (12 animais, em ordem alfabética pt-BR: Águia `eagle`, Cavalo `horse`, Cobra `snake`, Elefante `elephant`, Girafa `giraffe`, Gorila `gorilla`, Leão `lion`, Panda `panda`, Pinguim `penguin`, Raposa `fox`, Suricato `meerkat`, Tigre `tiger`): adicionar os PNGs de 128 × 128 px em `src/client/assets/avatars/` e exportar a lista de `avatarId` em `src/shared/avatars.ts`, usada pelo schema de `join` e pela interface — [FR-005]
 - [ ] T028 [US1] Implementar em `src/domain/room.ts` a criação do estado inicial da sala (rodada 1 em `voting`) e em `src/domain/participants.ts` o registro de participante em `join` (novo `sessionId` cria votante, ou facilitador com token válido; `sessionId` conhecido recupera papel e atualiza nome e avatar), com testes em `tests/unit/domain/` — [FR-002, FR-004, FR-022]
 - [ ] T029 [US1] Implementar `POST /api/rooms` em `src/worker/index.ts` e a inicialização da sala em `src/room/Room.ts`: valida o corpo com Zod (`name` "após remover espaços nas pontas: 1 a 250 caracteres", `deckType` `"points"` ou `"time"`), gera `roomId` e token (T013), grava `facilitator_token_hash` = SHA-256 hexadecimal, `created_at`, `last_activity_at`, `current_round = 1` e agenda `setAlarm(agora + 30 dias)` — [FR-001, FR-003, FR-021, FR-023]
 - [ ] T030 [US1] Implementar o handler `join` em `src/room/Room.ts` usando T028: valida `displayName` "após remover espaços nas pontas: 1 a 45 caracteres" e `avatarId` da lista de avatares ou `null`, compara o hash do `facilitatorToken`, gera `participant_id` no primeiro `join` e envia `room_state` a todos — [FR-002, FR-004, FR-005, FR-008, FR-021, FR-027]
-- [ ] T031 [P] [US1] Criar `src/client/components/Avatar.tsx` (SVG do `avatarId` ou, sem avatar, a primeira letra do nome como placeholder — FR-005) e `src/client/components/AvatarPicker.tsx` com Base UI e Tailwind, seleção opcional e navegável por teclado — [FR-005]
+- [X] T031 [P] [US1] Criar `src/client/components/Avatar.tsx` (PNG do `avatarId` ou, sem avatar, a primeira letra do nome como placeholder — FR-005) e `src/client/components/AvatarPicker.tsx` com Base UI e Tailwind, seleção opcional, avatares em ordem alfabética e navegável por teclado — [FR-005]
 - [ ] T032 [US1] Criar a tela `src/client/routes/Home.tsx`: nome da sala (obrigatório, até 250), baralho (story points ou tempo), nome do facilitador (obrigatório, até 45, pré-preenchido via T021) e avatar opcional; valida no cliente antes de chamar `POST /api/rooms` para que nenhuma sala seja criada com campo obrigatório vazio; salva o token por `roomId` e navega para `/r/$roomId` — [FR-001, FR-006, FR-008]
 - [ ] T033 [US1] Criar a tela `src/client/routes/Room.tsx` com cabeçalho (nome da sala) e botão "Copiar link" usando `navigator.clipboard`, exibindo o nome e o avatar (ou o placeholder) do próprio participante a partir de `you` (cenário 1 da US01), entrando automaticamente com o nome, o avatar e o token salvos quando o usuário acabou de criar a sala — [FR-003]
 
@@ -307,6 +307,7 @@ histórias US01…US11 da spec.
 - [ ] T082 [P] Criar o smoke test em `tests/smoke/deploy.smoke.spec.ts` com as 4 verificações de research R-03: `GET /` responde 200 e exibe a tela inicial; `POST /api/rooms` com `name` "[smoke] verificação de deploy" e `deckType` "points" responde 201 com `roomId` e `facilitatorToken` de 22 caracteres base62; conexão WebSocket nessa sala com `join` de facilitador recebe `room_state` com o nome da sala; conexão com `roomId` válido e inexistente é fechada com 4404; a suíte inteira roda em menos de 1 minuto — [FR-001, FR-003, FR-007, FR-009]
 - [ ] T083 Adicionar ao `.github/workflows/deploy.yml` um passo após o deploy que roda `npm run test:smoke` com `SMOKE_BASE_URL` igual à saída `deployment-url` do `cloudflare/wrangler-action@v4`; falha no smoke test marca o workflow como falho (constitution V); sem reversão automática
 - [ ] T084 Executar o roteiro de `specs/001-pokerfe-mvp/quickstart.md` contra o deploy em `*.workers.dev` (D-02) e registrar a URL de produção no `README.md`
+- [ ] T093 [P] Criar a tela de Créditos: rota própria em `src/client/router.tsx` e `src/client/routes/Credits.tsx` (caminho Proposta: `/creditos`), com a atribuição do Flaticon de cada avatar de `src/shared/avatars.ts` (link `https://www.flaticon.com/free-icons/<termo>`, `title="<termo> icons"` e texto "<Termo> icons created by Magnific - Flaticon", exatamente como fornecido pelo responsável pelo produto), em ordem alfabética pt-BR e com `target="_blank"` e `rel="noopener noreferrer"`; módulo único dos dados em `src/client/credits.ts`; link para a tela na interface (local Proposta); teste unitário em `tests/unit/client/credits.test.ts` (uma atribuição por `avatarId`, sem duplicatas, em ordem alfabética) — [FR-028]
 
 ---
 
@@ -334,7 +335,7 @@ histórias US01…US11 da spec.
 - **Setup (Phase 1)**: sem dependências. T010 (CI/deploy) depende de T001–T009 e, para o job de deploy funcionar, dos secrets `CLOUDFLARE_API_TOKEN` e `CLOUDFLARE_ACCOUNT_ID` cadastrados pelo responsável pelo produto.
 - **Developer Tooling (Phase 15)**: depende de T001–T009 (Phase 1) e deve ser concluída antes da Phase 2, para que o código das demais fases nasça com aliases e formatação. Não depende de T010 (CI). T085 antecede T086–T089; T090 antecede T091; T092 é a última.
 - **Foundational (Phase 2)**: depende do Setup e da Phase 15; bloqueia todas as histórias.
-- **US01 (Phase 3)**: depende da Phase 2. T027 (avatares) exige resposta do responsável pelo produto antes de começar.
+- **US01 (Phase 3)**: depende da Phase 2. T027 (avatares) usa a lista aprovada em 2026-11-04 (D-09).
 - **Ordem de execução das histórias** (dependências reais entre os cenários de aceite): US01 → US03 → US02 → US05 → US04 → US06 → US07 → US08 → US09 → US10 → US11.
   - US03 (Phase 4) depende de US01: monta presença e lista de participantes; o cenário "vejo que ele votou" é concluído na US05 (T043).
   - US02 (Phase 5) depende de US03: o cenário 1 exige a lista de participantes.
@@ -346,7 +347,7 @@ histórias US01…US11 da spec.
   - US09 depende de US07 e US08 (o histórico exibe título, mediana e moda).
 - **US10 (Phase 12)**: depende de US07 (após reconectar, o participante vê o resultado revelado).
 - **US11 (Phase 13)**: depende de US09 (histórico) e de US02 (tela de sala não encontrada).
-- **Polish (Phase 14)**: depende das histórias concluídas; T082 depende de T029 e T030 (criar sala e `join`); T083 depende de T010 e T082; T084 depende de T083 e dos secrets.
+- **Polish (Phase 14)**: depende das histórias concluídas; T082 depende de T029 e T030 (criar sala e `join`); T083 depende de T010 e T082; T084 depende de T083 e dos secrets; T093 depende de T020 (rotas) e T027 (lista de avatares).
 
 ### Within Each User Story
 
