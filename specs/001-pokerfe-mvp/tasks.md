@@ -120,13 +120,13 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 2
 
-- [ ] T038 [P] [US2] Teste de integração em `tests/integration/join-participant.test.ts`: participante novo entra como votante e aparece no `room_state` de todas as conexões; `join` repetido com o mesmo `sessionId` mantém `participantId` e atualiza nome e avatar; `displayName` com 46 caracteres recebe `validation_error`; `sessionId` nunca aparece no `room_state` de outra conexão — [FR-004, FR-008, FR-009]
-- [ ] T039 [P] [US2] Teste e2e em `tests/e2e/join-room.spec.ts` cobrindo os cenários 1 a 4 da US02 — [FR-004, FR-005, FR-006, FR-007]
+- [X] T038 [P] [US2] Teste de integração em `tests/integration/join-participant.test.ts`: participante novo entra como votante e aparece no `room_state` de todas as conexões; `join` repetido com o mesmo `sessionId` mantém `participantId` e atualiza nome e avatar; `displayName` com 46 caracteres recebe `validation_error`; `sessionId` nunca aparece no `room_state` de outra conexão — [FR-004, FR-008, FR-009]
+- [X] T039 [P] [US2] Teste e2e em `tests/e2e/join-room.spec.ts` cobrindo os cenários 1 a 4 da US02 — [FR-004, FR-005, FR-006, FR-007]
 
 ### Implementation for User Story 2
 
-- [ ] T040 [US2] Criar `src/client/components/JoinForm.tsx` (nome obrigatório até 45 e avatar opcional, pré-preenchidos com os valores lembrados e editáveis — FR-006) e exibi-lo em `src/client/routes/Room.tsx` quando o navegador ainda não entrou na sala — [FR-004, FR-006]
-- [ ] T041 [US2] Criar `src/client/components/RoomNotFound.tsx` com o texto "Sala não encontrada ou expirada" e uma ação que leva para `/`, exibido em `src/client/routes/Room.tsx` quando a conexão fecha com 4404 ou o `roomId` é inválido (FR-007) — [FR-007]
+- [X] T040 [US2] Criar `src/client/components/JoinForm.tsx` (nome obrigatório até 45 e avatar opcional, pré-preenchidos com os valores lembrados e editáveis — FR-006) e exibi-lo em `src/client/routes/Room.tsx` quando o navegador ainda não entrou na sala — [FR-004, FR-006]
+- [X] T041 [US2] Criar `src/client/components/RoomNotFound.tsx` com o texto "Sala não encontrada ou expirada" e uma ação que leva para `/`, exibido em `src/client/routes/Room.tsx` quando a conexão fecha com 4404 ou o `roomId` é inválido (FR-007) — [FR-007]
 
 **Checkpoint**: US01 e US02 funcionam juntas e isoladamente.
 
