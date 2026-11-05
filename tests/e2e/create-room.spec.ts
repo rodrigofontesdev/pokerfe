@@ -16,8 +16,8 @@ test("cria a sala e leva o criador à sala como facilitador", async ({
   await expect(
     page.getByRole("heading", { name: "Sprint 42 - Checkout" }),
   ).toBeVisible();
-  await expect(page.getByText("Ana")).toBeVisible();
-  await expect(page.getByRole("img", { name: "Raposa" })).toBeVisible();
+  await expect(page.getByText("Ana", { exact: true })).toBeVisible();
+  await expect(page.getByRole("img", { name: "Raposa" }).first()).toBeVisible();
 
   await page.getByRole("button", { name: "Copiar link" }).click();
   await expect(page.getByText("Link copiado")).toBeVisible();

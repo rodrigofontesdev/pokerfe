@@ -11,6 +11,7 @@ import { generateId } from "@shared/ids.ts";
 import { ROOM_TTL_MS } from "@shared/limits.ts";
 import { createInitialRoomState } from "@domain/room.ts";
 import { registerParticipant } from "@domain/participants.ts";
+import { buildPresence, isConnected } from "@domain/presence.ts";
 import type { Participant } from "@domain/types.ts";
 import { constantTimeEqual, sha256Hex } from "./hash.ts";
 import { applySchema } from "./schema.ts";
@@ -98,6 +99,33 @@ export class Room extends DurableObject<Env> {
   override async webSocketClose(ws: WebSocket, code: number): Promise<void> {
     // 1005/1006 não podem ser enviados em um close frame.
     ws.close(code === 1005 || code === 1006 ? 1000 : code);
+    this.markDisconnected(ws);
+  }
+
+  override async webSocketError(ws: WebSocket): Promise<void> {
+    this.markDisconnected(ws);
+  }
+
+  /** Marca `connected = 0` quando a última conexão do `sessionId` fecha. */
+  private markDisconnected(ws: WebSocket): void {
+    const attachment = ws.deserializeAttachment() as Attachment | null;
+    if (!attachment || !this.roomExists()) return;
+    const open = this.ctx
+      .getWebSockets()
+      .filter(
+        (other) =>
+          other !== ws &&
+          other.readyState === WebSocket.OPEN &&
+          (other.deserializeAttachment() as Attachment | null)?.sessionId ===
+            attachment.sessionId,
+      ).length;
+    if (isConnected(open)) return;
+    this.ctx.storage.sql.exec(
+      "UPDATE participants SET connected = 0, last_seen_at = ? WHERE session_id = ?",
+      Date.now(),
+      attachment.sessionId,
+    );
+    this.broadcastRoomState();
   }
 
   private async handleJoin(
@@ -185,13 +213,21 @@ export class Room extends DurableObject<Env> {
       .toArray()[0];
     if (!room) return null;
 
-    const participants = sql
-      .exec<ParticipantRow>(
-        "SELECT session_id, participant_id, display_name, avatar_id, is_facilitator, is_observer, connected FROM participants ORDER BY rowid",
+    const rows = sql
+      .exec<ParticipantRow & { last_seen_at: number }>(
+        "SELECT * FROM participants ORDER BY rowid",
       )
       .toArray();
-    const me = participants.find((p) => p.session_id === sessionId);
-    if (!me) return null;
+    const participants: Participant[] = rows.map((p) => ({
+      sessionId: p.session_id,
+      participantId: p.participant_id,
+      displayName: p.display_name,
+      avatarId: p.avatar_id,
+      isFacilitator: p.is_facilitator === 1,
+      isObserver: p.is_observer === 1,
+      connected: p.connected === 1,
+      lastSeenAt: p.last_seen_at,
+    }));
 
     const round = sql
       .exec<{
@@ -215,14 +251,20 @@ export class Room extends DurableObject<Env> {
       )
       .toArray();
     const voted = new Set(votes.map((v) => v.session_id));
+    const presence = buildPresence({
+      participants,
+      votedSessionIds: voted,
+      sessionId,
+    });
+    if (!presence) return null;
     const voters = participants.filter(
-      (p) => p.connected && !p.is_facilitator && !p.is_observer,
+      (p) => p.connected && !p.isFacilitator && !p.isObserver,
     );
-    const missingVotes = voters.filter((p) => !voted.has(p.session_id)).length;
+    const missingVotes = voters.filter((p) => !voted.has(p.sessionId)).length;
     const revealed = round.status === "revealed";
 
     const idOf = new Map(
-      participants.map((p) => [p.session_id, p.participant_id]),
+      participants.map((p) => [p.sessionId, p.participantId]),
     );
     const result = revealed
       ? {
@@ -258,20 +300,10 @@ export class Room extends DurableObject<Env> {
       type: "room_state",
       room: { name: room.name, deckType: room.deck_type, deck: [...deck] },
       you: {
-        participantId: me.participant_id,
-        isFacilitator: me.is_facilitator === 1,
-        isObserver: me.is_observer === 1,
+        ...presence.you,
         myVote: votes.find((v) => v.session_id === sessionId)?.card ?? null,
       },
-      participants: participants.map((p) => ({
-        participantId: p.participant_id,
-        displayName: p.display_name,
-        avatarId: p.avatar_id,
-        isFacilitator: p.is_facilitator === 1,
-        isObserver: p.is_observer === 1,
-        connected: p.connected === 1,
-        hasVoted: voted.has(p.session_id),
-      })),
+      participants: presence.participants,
       round: {
         number: round.number,
         title: round.title,

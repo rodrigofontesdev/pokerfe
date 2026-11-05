@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Avatar } from "@client/components/Avatar.tsx";
+import { ParticipantList } from "@client/components/ParticipantList.tsx";
 import { useRoomConnection } from "@client/realtime/useRoomConnection.ts";
 
 export function Room({ roomId }: { roomId: string }) {
@@ -54,6 +55,12 @@ export function Room({ roomId }: { roomId: string }) {
           )}
         </section>
       )}
+      <div className="mt-6">
+        <ParticipantList
+          participants={roomState.participants}
+          youId={roomState.you.participantId}
+        />
+      </div>
     </main>
   );
 }
