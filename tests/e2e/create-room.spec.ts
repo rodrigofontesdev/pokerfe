@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test.use({ permissions: ["clipboard-read", "clipboard-write"] });
 
-test("cria a sala e entra como facilitador (US01, cenário 1)", async ({
+test("cria a sala e leva o criador à sala como facilitador", async ({
   page,
 }) => {
   await page.goto("/");
@@ -25,7 +25,7 @@ test("cria a sala e entra como facilitador (US01, cenário 1)", async ({
   expect(copied).toBe(page.url());
 });
 
-test("não cria sala com campo obrigatório vazio (US01, cenário 2)", async ({
+test("exibe o campo obrigatório e não cria a sala quando nome da sala ou do facilitador está em branco", async ({
   page,
 }) => {
   let posts = 0;
