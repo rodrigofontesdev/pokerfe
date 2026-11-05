@@ -4,20 +4,20 @@ import {
   createRouter,
   Outlet,
 } from "@tanstack/react-router";
-import { useRoomConnection } from "./realtime/useRoomConnection.ts";
+import { Home } from "./routes/Home.tsx";
+import { Room } from "./routes/Room.tsx";
 
 const rootRoute = createRootRoute({ component: Outlet });
 
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
-  component: () => null,
+  component: Home,
 });
 
 function RoomPage() {
   const { roomId } = roomRoute.useParams();
-  useRoomConnection(roomId);
-  return null;
+  return <Room roomId={roomId} />;
 }
 
 const roomRoute = createRoute({
