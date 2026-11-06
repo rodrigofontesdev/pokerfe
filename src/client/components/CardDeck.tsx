@@ -14,7 +14,6 @@ type CardDeckProps = {
 const cardClass =
   "flex h-20 w-14 cursor-pointer items-center justify-center rounded-lg border-2 border-slate-400 bg-white text-lg font-semibold text-slate-900 outline-none hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 data-[checked]:border-blue-800 data-[checked]:bg-blue-800 data-[checked]:text-white data-[disabled]:cursor-not-allowed data-[disabled]:opacity-60";
 
-/** Cartas do baralho da sala; oculto para o facilitador (FR-011), desabilitado para observador. */
 export function CardDeck({
   deck,
   deckType,

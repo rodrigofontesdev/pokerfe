@@ -7,10 +7,6 @@ export type CastVoteResult =
       code: VoteRefusal;
     };
 
-/**
- * Valida um voto (FR-011, FR-013, FR-015): só votante (nem facilitador nem
- * observador), só com a rodada em `voting`, só com rótulo exato do baralho.
- */
 export function castVote(input: {
   participant: { isFacilitator: boolean; isObserver: boolean };
   roundStatus: "voting" | "revealed" | "archived";
