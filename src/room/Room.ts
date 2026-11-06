@@ -6,6 +6,7 @@ import {
   type RoomState,
   type ServerMessage,
   clientMessageSchema,
+  joinMessageSchema,
 } from "@shared/protocol.ts";
 import { generateId } from "@shared/ids.ts";
 import { ROOM_TTL_MS } from "@shared/limits.ts";
@@ -72,9 +73,17 @@ export class Room extends DurableObject<Env> {
     const [client, server] = [pair[0], pair[1]];
     this.ctx.acceptWebSocket(server);
     if (!this.roomExists()) {
-      server.close(ROOM_NOT_FOUND_CLOSE_CODE, "room_not_found");
+      // Fechar na hora pode perder o código 4404 no cliente; o Alarm fecha logo depois.
+      await this.ctx.storage.setAlarm(Date.now() + 50);
     }
     return new Response(null, { status: 101, webSocket: client });
+  }
+
+  override async alarm(): Promise<void> {
+    if (this.roomExists()) return;
+    for (const ws of this.ctx.getWebSockets()) {
+      ws.close(ROOM_NOT_FOUND_CLOSE_CODE, "room_not_found");
+    }
   }
 
   override async webSocketMessage(
@@ -83,6 +92,13 @@ export class Room extends DurableObject<Env> {
   ): Promise<void> {
     const message = this.parse(data);
     if (!message) {
+      if (this.isInvalidDisplayName(data)) {
+        return this.sendError(
+          ws,
+          "validation_error",
+          "Nome inválido: use de 1 a 45 caracteres",
+        );
+      }
       return this.sendError(ws, "invalid_message", "Mensagem inválida");
     }
     const attachment = ws.deserializeAttachment() as Attachment | null;
@@ -326,6 +342,22 @@ export class Room extends DurableObject<Env> {
     return (
       this.ctx.storage.sql.exec("SELECT 1 FROM room LIMIT 1").toArray().length >
       0
+    );
+  }
+
+  /** `join` bem formado cujo único problema é o `displayName` (FR-008). */
+  private isInvalidDisplayName(data: string | ArrayBuffer): boolean {
+    if (typeof data !== "string") return false;
+    let json: unknown;
+    try {
+      json = JSON.parse(data);
+    } catch {
+      return false;
+    }
+    const parsed = joinMessageSchema.safeParse(json);
+    return (
+      !parsed.success &&
+      parsed.error.issues.every((issue) => issue.path[0] === "displayName")
     );
   }
 

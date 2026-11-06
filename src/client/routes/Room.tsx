@@ -1,10 +1,20 @@
 import { useState } from "react";
+import { isValidId } from "@shared/ids.ts";
+import { JoinForm } from "@client/components/JoinForm.tsx";
+import { RoomNotFound } from "@client/components/RoomNotFound.tsx";
 import { Avatar } from "@client/components/Avatar.tsx";
 import { ParticipantList } from "@client/components/ParticipantList.tsx";
+import { getFacilitatorToken } from "@client/storage/local.ts";
 import { useRoomConnection } from "@client/realtime/useRoomConnection.ts";
 
 export function Room({ roomId }: { roomId: string }) {
-  const { roomState } = useRoomConnection(roomId);
+  if (!isValidId(roomId)) return <RoomNotFound />;
+  return <ConnectedRoom roomId={roomId} />;
+}
+
+function ConnectedRoom({ roomId }: { roomId: string }) {
+  const { roomState, notFound, lastError, status, join } =
+    useRoomConnection(roomId);
   const [copied, setCopied] = useState<"ok" | "error" | null>(null);
 
   async function copyLink() {
@@ -16,7 +26,21 @@ export function Room({ roomId }: { roomId: string }) {
     }
   }
 
+  const autoJoin = getFacilitatorToken(roomId) !== null;
+
+  if (notFound) return <RoomNotFound />;
+
   if (!roomState) {
+    if (status !== "closed" && !autoJoin) {
+      return (
+        <JoinForm
+          serverError={
+            lastError?.code === "validation_error" ? lastError.message : null
+          }
+          onJoin={join}
+        />
+      );
+    }
     return (
       <main className="mx-auto max-w-3xl px-6 py-12">
         <p>Conectando à sala…</p>

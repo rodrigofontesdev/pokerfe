@@ -1,5 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { RoomState } from "@shared/protocol.ts";
+import {
+  getFacilitatorToken,
+  saveProfile,
+  type Profile,
+} from "@client/storage/local.ts";
 import { createRoomConnection, type ErrorMessage } from "./connection.ts";
 
 export type ConnectionStatus = "connecting" | "open" | "closed";
@@ -9,15 +14,19 @@ export function useRoomConnection(roomId: string): {
   lastError: ErrorMessage | null;
   notFound: boolean;
   status: ConnectionStatus;
+  join: (profile: Profile) => void;
 } {
   const [roomState, setRoomState] = useState<RoomState | null>(null);
   const [lastError, setLastError] = useState<ErrorMessage | null>(null);
   const [notFound, setNotFound] = useState(false);
   const [status, setStatus] = useState<ConnectionStatus>("connecting");
 
+  const connectionRef = useRef<ReturnType<typeof createRoomConnection>>(null);
+
   useEffect(() => {
     const connection = createRoomConnection({
       roomId,
+      deferJoin: getFacilitatorToken(roomId) === null,
       onState: (state) => {
         setRoomState(state);
         setStatus("open");
@@ -26,8 +35,17 @@ export function useRoomConnection(roomId: string): {
       onNotFound: () => setNotFound(true),
       onClose: () => setStatus("closed"),
     });
-    return () => connection.close();
+    connectionRef.current = connection;
+    return () => {
+      connection.close();
+      connectionRef.current = null;
+    };
   }, [roomId]);
 
-  return { roomState, lastError, notFound, status };
+  const join = useCallback((profile: Profile) => {
+    saveProfile(profile);
+    connectionRef.current?.join(profile);
+  }, []);
+
+  return { roomState, lastError, notFound, status, join };
 }

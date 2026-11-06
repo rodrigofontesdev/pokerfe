@@ -43,18 +43,22 @@ export type RoomConnectionOptions = {
   onState: (state: RoomState) => void;
   onError: (error: ErrorMessage) => void;
   onNotFound: () => void;
+  /** Aguarda `join()` em vez de entrar ao abrir a conexão. */
+  deferJoin?: boolean;
   onClose?: (code: number) => void;
 };
 
 export function createRoomConnection(options: RoomConnectionOptions): {
   close: () => void;
+  join: (profile: Profile) => void;
 } {
   const url = options.url ?? buildWsUrl(options.roomId);
   const socket = (options.createSocket ?? ((u) => new WebSocket(u)))(url);
   let closed = false;
+  let opened = false;
+  let pending: Profile | null = null;
 
-  socket.onopen = () => {
-    const profile = options.profile ?? getProfile();
+  function sendJoin(profile: Profile | null) {
     const token = getFacilitatorToken(options.roomId);
     const join = joinMessageSchema.safeParse({
       type: "join",
@@ -64,6 +68,18 @@ export function createRoomConnection(options: RoomConnectionOptions): {
       ...(token ? { facilitatorToken: token } : {}),
     });
     if (join.success) socket.send(JSON.stringify(join.data));
+  }
+
+  socket.onopen = () => {
+    opened = true;
+    if (pending) sendJoin(pending);
+    else if (!options.deferJoin) sendJoin(options.profile ?? getProfile());
+    else {
+      // No servidor de dev (Vite + Miniflare) o fechamento 4404 de uma conexão
+      // ociosa só chega depois de o cliente enviar algo. Tipo desconhecido é
+      // respondido com invalid_message e a conexão continua aberta (contrato).
+      socket.send(JSON.stringify({ type: "probe" }));
+    }
   };
 
   socket.onmessage = (event: { data: unknown }) => {
@@ -91,6 +107,11 @@ export function createRoomConnection(options: RoomConnectionOptions): {
     close() {
       closed = true;
       socket.close();
+    },
+    join(profile) {
+      if (closed) return;
+      if (opened) sendJoin(profile);
+      else pending = profile;
     },
   };
 }
