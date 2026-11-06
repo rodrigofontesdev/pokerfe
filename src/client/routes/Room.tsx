@@ -4,6 +4,8 @@ import { JoinForm } from "@client/components/JoinForm.tsx";
 import { RoomNotFound } from "@client/components/RoomNotFound.tsx";
 import { Avatar } from "@client/components/Avatar.tsx";
 import { CardDeck } from "@client/components/CardDeck.tsx";
+import { FacilitatorPanel } from "@client/components/FacilitatorPanel.tsx";
+import { RevealedCards } from "@client/components/RevealedCards.tsx";
 import { ParticipantList } from "@client/components/ParticipantList.tsx";
 import { getFacilitatorToken } from "@client/storage/local.ts";
 import { useRoomConnection } from "@client/realtime/useRoomConnection.ts";
@@ -14,8 +16,16 @@ export function Room({ roomId }: { roomId: string }) {
 }
 
 function ConnectedRoom({ roomId }: { roomId: string }) {
-  const { roomState, notFound, lastError, status, join, vote, setObserver } =
-    useRoomConnection(roomId);
+  const {
+    roomState,
+    notFound,
+    lastError,
+    status,
+    join,
+    vote,
+    setObserver,
+    reveal,
+  } = useRoomConnection(roomId);
   const [copied, setCopied] = useState<"ok" | "error" | null>(null);
 
   async function copyLink() {
@@ -89,6 +99,24 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
             isFacilitator={roomState.you.isFacilitator}
             isObserver={roomState.you.isObserver}
             onVote={vote}
+          />
+        </div>
+      )}
+      {roomState.you.isFacilitator && roomState.round.status === "voting" && (
+        <div className="mt-6">
+          <FacilitatorPanel
+            canReveal={roomState.round.canReveal}
+            missingVotes={roomState.round.missingVotes}
+            onReveal={reveal}
+          />
+        </div>
+      )}
+      {roomState.round.status === "revealed" && roomState.round.votes && (
+        <div className="mt-6">
+          <RevealedCards
+            votes={roomState.round.votes}
+            participants={roomState.participants}
+            deckType={roomState.room.deckType}
           />
         </div>
       )}
