@@ -24,18 +24,14 @@ async function joinAs(browser: Browser, url: string, name: string) {
 const row = (page: import("@playwright/test").Page, name: string) =>
   page.getByRole("listitem").filter({ hasText: name });
 
-test("facilitador marca e desmarca observador (cenários 1 a 3)", async ({
-  browser,
-}) => {
+test("facilitador marca e desmarca observador", async ({ browser }) => {
   const { page: fac, url } = await createRoom(browser);
   const carlos = await joinAs(browser, url, "Carlos");
   const deck = carlos.getByRole("radiogroup", { name: "Cartas" });
 
-  // Cenário 2: voto descartado ao virar observador.
   await deck.getByRole("radio", { name: "5", exact: true }).click();
   await expect(row(fac, "Carlos").getByText("Votou")).toBeVisible();
 
-  // Cenário 1
   await row(fac, "Carlos")
     .getByRole("button", { name: "Marcar como observador" })
     .click();
@@ -49,7 +45,6 @@ test("facilitador marca e desmarca observador (cenários 1 a 3)", async ({
     deck.getByRole("radio", { name: "5", exact: true }),
   ).not.toBeChecked();
 
-  // Cenário 3
   await row(fac, "Carlos")
     .getByRole("button", { name: "Marcar como votante" })
     .click();
@@ -59,16 +54,14 @@ test("facilitador marca e desmarca observador (cenários 1 a 3)", async ({
   ).toBeEnabled();
 });
 
-test("participante comum não vê a opção (cenário 4)", async ({ browser }) => {
+test("participante comum não vê a opção", async ({ browser }) => {
   const { url } = await createRoom(browser);
   const ana = await joinAs(browser, url, "Ana");
   await expect(row(ana, "Fátima")).toBeVisible();
   await expect(ana.getByRole("button", { name: /Marcar como/ })).toHaveCount(0);
 });
 
-test("facilitador não vê a opção na própria linha (cenário 5)", async ({
-  browser,
-}) => {
+test("facilitador não vê a opção na própria linha", async ({ browser }) => {
   const { page: fac, url } = await createRoom(browser);
   await joinAs(browser, url, "Ana");
   await expect(row(fac, "Ana")).toBeVisible();
