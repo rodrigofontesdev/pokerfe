@@ -15,6 +15,7 @@ export function useRoomConnection(roomId: string): {
   notFound: boolean;
   status: ConnectionStatus;
   join: (profile: Profile) => void;
+  vote: (card: string) => void;
 } {
   const [roomState, setRoomState] = useState<RoomState | null>(null);
   const [lastError, setLastError] = useState<ErrorMessage | null>(null);
@@ -47,5 +48,9 @@ export function useRoomConnection(roomId: string): {
     connectionRef.current?.join(profile);
   }, []);
 
-  return { roomState, lastError, notFound, status, join };
+  const vote = useCallback((card: string) => {
+    connectionRef.current?.vote(card);
+  }, []);
+
+  return { roomState, lastError, notFound, status, join, vote };
 }

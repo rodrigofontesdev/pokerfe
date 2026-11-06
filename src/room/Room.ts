@@ -13,6 +13,7 @@ import { ROOM_TTL_MS } from "@shared/limits.ts";
 import { createInitialRoomState } from "@domain/room.ts";
 import { registerParticipant } from "@domain/participants.ts";
 import { buildPresence, isConnected } from "@domain/presence.ts";
+import { castVote } from "@domain/voting.ts";
 import type { Participant } from "@domain/types.ts";
 import { constantTimeEqual, sha256Hex } from "./hash.ts";
 import { applySchema } from "./schema.ts";
@@ -108,7 +109,10 @@ export class Room extends DurableObject<Env> {
     if (message.type === "join") {
       return this.handleJoin(ws, message);
     }
-    // Os demais handlers (vote etc.) chegam nas issues das histórias.
+    if (message.type === "vote") {
+      return this.handleVote(ws, attachment!.sessionId, message.card);
+    }
+    // Os demais handlers chegam nas issues das histórias.
     this.sendError(ws, "invalid_message", "Mensagem não suportada");
   }
 
@@ -204,6 +208,69 @@ export class Room extends DurableObject<Env> {
       p.lastSeenAt,
     );
     ws.serializeAttachment({ sessionId: p.sessionId } satisfies Attachment);
+    this.broadcastRoomState();
+  }
+
+  private async handleVote(
+    ws: WebSocket,
+    sessionId: string,
+    card: string,
+  ): Promise<void> {
+    const sql = this.ctx.storage.sql;
+    const room = sql
+      .exec<{ deck_type: DeckType; current_round: number }>(
+        "SELECT deck_type, current_round FROM room",
+      )
+      .toArray()[0];
+    const me = sql
+      .exec<{ is_facilitator: number; is_observer: number }>(
+        "SELECT is_facilitator, is_observer FROM participants WHERE session_id = ?",
+        sessionId,
+      )
+      .toArray()[0];
+    const round = room
+      ? sql
+          .exec<{ status: "voting" | "revealed" | "archived" }>(
+            "SELECT status FROM rounds WHERE number = ?",
+            room.current_round,
+          )
+          .toArray()[0]
+      : undefined;
+    if (!room || !me || !round) return;
+
+    const result = castVote({
+      participant: {
+        isFacilitator: me.is_facilitator === 1,
+        isObserver: me.is_observer === 1,
+      },
+      roundStatus: round.status,
+      deck: DECKS[room.deck_type],
+      card,
+    });
+    if (!result.ok) {
+      const messages: Record<typeof result.code, string> = {
+        forbidden: "Você não pode votar",
+        round_not_voting: "A rodada não está em votação",
+        invalid_card: "Carta inválida para o baralho da sala",
+      };
+      return this.sendError(ws, result.code, messages[result.code]);
+    }
+
+    const now = Date.now();
+    sql.exec(
+      `INSERT INTO votes (round_number, session_id, card) VALUES (?, ?, ?)
+       ON CONFLICT(round_number, session_id) DO UPDATE SET card = excluded.card`,
+      room.current_round,
+      sessionId,
+      result.card,
+    );
+    sql.exec("UPDATE room SET last_activity_at = ?", now);
+    sql.exec(
+      "UPDATE participants SET last_seen_at = ? WHERE session_id = ?",
+      now,
+      sessionId,
+    );
+    await this.ctx.storage.setAlarm(now + ROOM_TTL_MS);
     this.broadcastRoomState();
   }
 

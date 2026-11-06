@@ -140,14 +140,14 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 5
 
-- [ ] T042 [P] [US5] Testes unitários em `tests/unit/domain/voting.test.ts`: voto aceito só de votante, só em `voting`, só com rótulo do baralho da sala; troca substitui; facilitador e observador recebem recusa — [FR-011, FR-013, FR-015]
-- [ ] T043 [P] [US5] Teste de integração em `tests/integration/vote.test.ts`: `invalid_card`, `forbidden`, `round_not_voting`; voto válido atualiza `last_activity_at` e reagenda o Alarm para agora + 30 dias (FR-023); após um voto, o votante aparece com `hasVoted: true` para todas as conexões e nenhum `room_state` traz o valor do voto de outra pessoa antes da revelação, só `you.myVote` (completa o cenário 1 da US03) — [FR-009, FR-013, FR-015, FR-023]
-- [ ] T044 [P] [US5] Teste e2e em `tests/e2e/vote.spec.ts` cobrindo os cenários 1 e 2 da US05 — [FR-011, FR-015]
+- [X] T042 [P] [US5] Testes unitários em `tests/unit/domain/voting.test.ts`: voto aceito só de votante, só em `voting`, só com rótulo do baralho da sala; troca substitui; facilitador e observador recebem recusa — [FR-011, FR-013, FR-015]
+- [X] T043 [P] [US5] Teste de integração em `tests/integration/vote.test.ts`: `invalid_card`, `forbidden`, `round_not_voting`; voto válido atualiza `last_activity_at` e reagenda o Alarm para agora + 30 dias (FR-023); após um voto, o votante aparece com `hasVoted: true` para todas as conexões e nenhum `room_state` traz o valor do voto de outra pessoa antes da revelação, só `you.myVote` (completa o cenário 1 da US03) — [FR-009, FR-013, FR-015, FR-023]
+- [X] T044 [P] [US5] Teste e2e em `tests/e2e/vote.spec.ts` cobrindo os cenários 1 e 2 da US05 — [FR-011, FR-015]
 
 ### Implementation for User Story 5
 
-- [ ] T045 [US5] Implementar `castVote` em `src/domain/voting.ts` e o handler `vote` em `src/room/Room.ts` (uma linha por (`round_number`, `session_id`), substituída na troca), renovando `last_activity_at` e o Alarm — [FR-011, FR-013, FR-015, FR-023]
-- [ ] T046 [US5] Criar `src/client/components/CardDeck.tsx` com Base UI e Tailwind: cartas do baralho da sala, carta escolhida destacada, navegável por teclado e com contraste AA (SC-005), oculto para facilitador e desabilitado para observador — [FR-011, FR-013]
+- [X] T045 [US5] Implementar `castVote` em `src/domain/voting.ts` e o handler `vote` em `src/room/Room.ts` (uma linha por (`round_number`, `session_id`), substituída na troca), renovando `last_activity_at` e o Alarm — [FR-011, FR-013, FR-015, FR-023]
+- [X] T046 [US5] Criar `src/client/components/CardDeck.tsx` com Base UI e Tailwind: cartas do baralho da sala, carta escolhida destacada, navegável por teclado e com contraste AA (SC-005), oculto para facilitador e desabilitado para observador — [FR-011, FR-013]
 
 **Checkpoint**: votação funcional.
 
