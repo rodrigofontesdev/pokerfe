@@ -78,7 +78,6 @@ test("sala inexistente mostra aviso e leva para criar nova sala", async ({
 
   await page.goto("/r/invalido");
   await expect(page.getByText("Sala não encontrada ou expirada")).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Criar nova sala" }),
-  ).toBeVisible();
+  await page.getByRole("link", { name: "Criar nova sala" }).click();
+  await expect(page).toHaveURL(/\/$/);
 });
