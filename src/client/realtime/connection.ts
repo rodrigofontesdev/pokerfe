@@ -52,6 +52,7 @@ export function createRoomConnection(options: RoomConnectionOptions): {
   close: () => void;
   join: (profile: Profile) => void;
   vote: (card: string) => void;
+  setObserver: (participantId: string, observer: boolean) => void;
 } {
   const url = options.url ?? buildWsUrl(options.roomId);
   const socket = (options.createSocket ?? ((u) => new WebSocket(u)))(url);
@@ -112,6 +113,12 @@ export function createRoomConnection(options: RoomConnectionOptions): {
     vote(card) {
       if (closed || !opened) return;
       socket.send(JSON.stringify({ type: "vote", card }));
+    },
+    setObserver(participantId, observer) {
+      if (closed || !opened) return;
+      socket.send(
+        JSON.stringify({ type: "set_observer", participantId, observer }),
+      );
     },
     join(profile) {
       if (closed) return;
