@@ -182,14 +182,14 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 6
 
-- [ ] T052 [P] [US6] Testes unitários em `tests/unit/domain/reveal.test.ts`: `canReveal` falso sem votante conectado; falso com voto faltando; verdadeiro com todos os votantes conectados votando e observadores presentes; votante desconectado não é esperado e o voto que já registrou entra na revelação (FR-020); `missingVotes` correto — [FR-012, FR-020]
-- [ ] T053 [P] [US6] Teste de integração em `tests/integration/reveal.test.ts`: `reveal_blocked`, `forbidden`, `round_not_voting`; revelação enviada a todas as conexões no mesmo broadcast com `votes`; votos bloqueados depois — [FR-012, FR-015, FR-016, FR-021]
-- [ ] T054 [P] [US6] Teste e2e em `tests/e2e/reveal.spec.ts` cobrindo os cenários 1 a 5 da US06, exceto a exibição de mediana e moda do cenário 3, verificada no teste e2e da US07 — [FR-012, FR-016]
+- [X] T052 [P] [US6] Testes unitários em `tests/unit/domain/reveal.test.ts`: `canReveal` falso sem votante conectado; falso com voto faltando; verdadeiro com todos os votantes conectados votando e observadores presentes; votante desconectado não é esperado e o voto que já registrou entra na revelação (FR-020); `missingVotes` correto — [FR-012, FR-020]
+- [X] T053 [P] [US6] Teste de integração em `tests/integration/reveal.test.ts`: `reveal_blocked`, `forbidden`, `round_not_voting`; revelação enviada a todas as conexões no mesmo broadcast com `votes`; votos bloqueados depois — [FR-012, FR-015, FR-016, FR-021]
+- [X] T054 [P] [US6] Teste e2e em `tests/e2e/reveal.spec.ts` cobrindo os cenários 1 a 5 da US06, exceto a exibição de mediana e moda do cenário 3, verificada no teste e2e da US07 — [FR-012, FR-016]
 
 ### Implementation for User Story 6
 
-- [ ] T055 [US6] Implementar `canReveal`, `missingVotes` e a transição `voting → revealed` em `src/domain/reveal.ts`, e o handler `reveal` em `src/room/Room.ts` — [FR-012, FR-016, FR-020]
-- [ ] T056 [US6] Criar `src/client/components/FacilitatorPanel.tsx` com o botão "Revelar cartas" (habilitado conforme `round.canReveal`, mostrando `missingVotes`) e exibir as cartas reveladas de cada participante em `src/client/routes/Room.tsx` — [FR-012, FR-016]
+- [X] T055 [US6] Implementar `canReveal`, `missingVotes` e a transição `voting → revealed` em `src/domain/reveal.ts`, e o handler `reveal` em `src/room/Room.ts` — [FR-012, FR-016, FR-020]
+- [X] T056 [US6] Criar `src/client/components/FacilitatorPanel.tsx` com o botão "Revelar cartas" (habilitado conforme `round.canReveal`, mostrando `missingVotes`) e exibir as cartas reveladas de cada participante em `src/client/routes/Room.tsx` — [FR-012, FR-016]
 
 **Checkpoint**: rodada completa até a revelação.
 

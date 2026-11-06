@@ -15,6 +15,7 @@ import { registerParticipant } from "@domain/participants.ts";
 import { buildPresence, isConnected } from "@domain/presence.ts";
 import { castVote } from "@domain/voting.ts";
 import { setObserver } from "@domain/observers.ts";
+import { canReveal, missingVotes, reveal } from "@domain/reveal.ts";
 import type { Participant } from "@domain/types.ts";
 import { constantTimeEqual, sha256Hex } from "./hash.ts";
 import { applySchema } from "./schema.ts";
@@ -115,6 +116,9 @@ export class Room extends DurableObject<Env> {
     }
     if (message.type === "set_observer") {
       return this.handleSetObserver(ws, attachment!.sessionId, message);
+    }
+    if (message.type === "reveal") {
+      return this.handleReveal(ws, attachment!.sessionId);
     }
     // Os demais handlers chegam nas issues das histórias.
     this.sendError(ws, "invalid_message", "Mensagem não suportada");
@@ -341,6 +345,69 @@ export class Room extends DurableObject<Env> {
     this.broadcastRoomState();
   }
 
+  private handleReveal(ws: WebSocket, sessionId: string): void {
+    const sql = this.ctx.storage.sql;
+    const room = sql
+      .exec<{ current_round: number }>("SELECT current_round FROM room")
+      .toArray()[0];
+    const actor = sql
+      .exec<{ is_facilitator: number }>(
+        "SELECT is_facilitator FROM participants WHERE session_id = ?",
+        sessionId,
+      )
+      .toArray()[0];
+    const round = room
+      ? sql
+          .exec<{ status: "voting" | "revealed" | "archived" }>(
+            "SELECT status FROM rounds WHERE number = ?",
+            room.current_round,
+          )
+          .toArray()[0]
+      : undefined;
+    if (!room || !actor || !round) return;
+
+    const participants = sql
+      .exec<ParticipantRow>("SELECT * FROM participants")
+      .toArray()
+      .map((p) => ({
+        sessionId: p.session_id,
+        isFacilitator: p.is_facilitator === 1,
+        isObserver: p.is_observer === 1,
+        connected: p.connected === 1,
+      }));
+    const votedSessionIds = new Set(
+      sql
+        .exec<{ session_id: string }>(
+          "SELECT session_id FROM votes WHERE round_number = ?",
+          room.current_round,
+        )
+        .toArray()
+        .map((v) => v.session_id),
+    );
+
+    const result = reveal({
+      actor: { isFacilitator: actor.is_facilitator === 1 },
+      roundStatus: round.status,
+      participants,
+      votedSessionIds,
+    });
+    if (!result.ok) {
+      const messages: Record<typeof result.code, string> = {
+        forbidden: "Apenas o facilitador pode revelar as cartas",
+        round_not_voting: "A rodada não está em votação",
+        reveal_blocked: "Ainda faltam votos",
+      };
+      return this.sendError(ws, result.code, messages[result.code]);
+    }
+
+    sql.exec(
+      "UPDATE rounds SET status = 'revealed', revealed_at = ? WHERE number = ?",
+      Date.now(),
+      room.current_round,
+    );
+    this.broadcastRoomState();
+  }
+
   /** Envia a cada conexão com `join` feito o `room_state` personalizado. */
   broadcastRoomState(): void {
     for (const ws of this.ctx.getWebSockets()) {
@@ -407,10 +474,7 @@ export class Room extends DurableObject<Env> {
       sessionId,
     });
     if (!presence) return null;
-    const voters = participants.filter(
-      (p) => p.connected && !p.isFacilitator && !p.isObserver,
-    );
-    const missingVotes = voters.filter((p) => !voted.has(p.sessionId)).length;
+    const revealInput = { participants, votedSessionIds: voted };
     const revealed = round.status === "revealed";
 
     const idOf = new Map(
@@ -458,8 +522,8 @@ export class Room extends DurableObject<Env> {
         number: round.number,
         title: round.title,
         status: round.status,
-        missingVotes,
-        canReveal: !revealed && voters.length > 0 && missingVotes === 0,
+        missingVotes: missingVotes(revealInput),
+        canReveal: !revealed && canReveal(revealInput),
         votes: revealed
           ? votes.map((v) => ({
               participantId: idOf.get(v.session_id) ?? "",
