@@ -1,4 +1,5 @@
 import type { RoomState } from "@shared/protocol.ts";
+import { Button } from "@base-ui/react/button";
 import { Avatar } from "./Avatar.tsx";
 
 type Participant = RoomState["participants"][number];
@@ -12,9 +13,13 @@ function roleLabel(p: Participant): string {
 export function ParticipantList({
   participants,
   youId,
+  isFacilitator,
+  onSetObserver,
 }: {
   participants: Participant[];
   youId: string;
+  isFacilitator: boolean;
+  onSetObserver: (participantId: string, observer: boolean) => void;
 }) {
   return (
     <section aria-labelledby="participants-heading">
@@ -45,6 +50,18 @@ export function ParticipantList({
                   {roleLabel(p)}
                   {!p.connected && " · Desconectado"}
                 </p>
+                {isFacilitator && p.participantId !== youId && (
+                  <Button
+                    onClick={() =>
+                      onSetObserver(p.participantId, !p.isObserver)
+                    }
+                    className="mt-1 rounded-md border border-slate-300 px-2 py-1 text-sm font-medium hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700"
+                  >
+                    {p.isObserver
+                      ? "Marcar como votante"
+                      : "Marcar como observador"}
+                  </Button>
+                )}
               </div>
               {canVote && (
                 <span

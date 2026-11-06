@@ -14,7 +14,7 @@ export function Room({ roomId }: { roomId: string }) {
 }
 
 function ConnectedRoom({ roomId }: { roomId: string }) {
-  const { roomState, notFound, lastError, status, join, vote } =
+  const { roomState, notFound, lastError, status, join, vote, setObserver } =
     useRoomConnection(roomId);
   const [copied, setCopied] = useState<"ok" | "error" | null>(null);
 
@@ -96,6 +96,8 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
         <ParticipantList
           participants={roomState.participants}
           youId={roomState.you.participantId}
+          isFacilitator={roomState.you.isFacilitator}
+          onSetObserver={setObserver}
         />
       </div>
     </main>

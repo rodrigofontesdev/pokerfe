@@ -161,14 +161,14 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 4
 
-- [ ] T047 [P] [US4] Testes unitários em `tests/unit/domain/observers.test.ts`: facilitador alterna outro participante; não pode marcar a si mesmo; ao virar observador em `voting`, o voto da rodada atual é apagado; observador volta a votante — [FR-010]
-- [ ] T048 [P] [US4] Teste de integração em `tests/integration/observers.test.ts`: `forbidden` para não facilitador, `invalid_target` para participante inexistente ou para o próprio facilitador — [FR-010, FR-021]
-- [ ] T049 [P] [US4] Teste e2e em `tests/e2e/observers.spec.ts` cobrindo os cenários 1 a 5 da US04 — [FR-010]
+- [X] T047 [P] [US4] Testes unitários em `tests/unit/domain/observers.test.ts`: facilitador alterna outro participante; não pode marcar a si mesmo; ao virar observador em `voting`, o voto da rodada atual é apagado; observador volta a votante — [FR-010]
+- [X] T048 [P] [US4] Teste de integração em `tests/integration/observers.test.ts`: `forbidden` para não facilitador, `invalid_target` para participante inexistente ou para o próprio facilitador — [FR-010, FR-021]
+- [X] T049 [P] [US4] Teste e2e em `tests/e2e/observers.spec.ts` cobrindo os cenários 1 a 5 da US04 — [FR-010]
 
 ### Implementation for User Story 4
 
-- [ ] T050 [US4] Implementar `setObserver` em `src/domain/observers.ts` e o handler `set_observer` em `src/room/Room.ts`, endereçando o alvo por `participantId` — [FR-010, FR-021]
-- [ ] T051 [US4] Adicionar em `src/client/components/ParticipantList.tsx` a ação "Marcar como observador"/"Marcar como votante" (Base UI), visível só para o facilitador e nunca na própria linha — [FR-010]
+- [X] T050 [US4] Implementar `setObserver` em `src/domain/observers.ts` e o handler `set_observer` em `src/room/Room.ts`, endereçando o alvo por `participantId` — [FR-010, FR-021]
+- [X] T051 [US4] Adicionar em `src/client/components/ParticipantList.tsx` a ação "Marcar como observador"/"Marcar como votante" (Base UI), visível só para o facilitador e nunca na própria linha — [FR-010]
 
 **Checkpoint**: observadores não bloqueiam a revelação.
 

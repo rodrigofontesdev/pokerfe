@@ -14,6 +14,7 @@ import { createInitialRoomState } from "@domain/room.ts";
 import { registerParticipant } from "@domain/participants.ts";
 import { buildPresence, isConnected } from "@domain/presence.ts";
 import { castVote } from "@domain/voting.ts";
+import { setObserver } from "@domain/observers.ts";
 import type { Participant } from "@domain/types.ts";
 import { constantTimeEqual, sha256Hex } from "./hash.ts";
 import { applySchema } from "./schema.ts";
@@ -111,6 +112,9 @@ export class Room extends DurableObject<Env> {
     }
     if (message.type === "vote") {
       return this.handleVote(ws, attachment!.sessionId, message.card);
+    }
+    if (message.type === "set_observer") {
+      return this.handleSetObserver(ws, attachment!.sessionId, message);
     }
     // Os demais handlers chegam nas issues das histórias.
     this.sendError(ws, "invalid_message", "Mensagem não suportada");
@@ -271,6 +275,69 @@ export class Room extends DurableObject<Env> {
       sessionId,
     );
     await this.ctx.storage.setAlarm(now + ROOM_TTL_MS);
+    this.broadcastRoomState();
+  }
+
+  private async handleSetObserver(
+    ws: WebSocket,
+    sessionId: string,
+    message: Extract<ClientMessage, { type: "set_observer" }>,
+  ): Promise<void> {
+    const sql = this.ctx.storage.sql;
+    const room = sql
+      .exec<{ current_round: number }>("SELECT current_round FROM room")
+      .toArray()[0];
+    const actor = sql
+      .exec<{ participant_id: string; is_facilitator: number }>(
+        "SELECT participant_id, is_facilitator FROM participants WHERE session_id = ?",
+        sessionId,
+      )
+      .toArray()[0];
+    const target = sql
+      .exec<{ session_id: string; participant_id: string }>(
+        "SELECT session_id, participant_id FROM participants WHERE participant_id = ?",
+        message.participantId,
+      )
+      .toArray()[0];
+    const round = room
+      ? sql
+          .exec<{ status: "voting" | "revealed" | "archived" }>(
+            "SELECT status FROM rounds WHERE number = ?",
+            room.current_round,
+          )
+          .toArray()[0]
+      : undefined;
+    if (!room || !actor || !round) return;
+
+    const result = setObserver({
+      actor: {
+        participantId: actor.participant_id,
+        isFacilitator: actor.is_facilitator === 1,
+      },
+      target: target ? { participantId: target.participant_id } : null,
+      observer: message.observer,
+      roundStatus: round.status,
+    });
+    if (!result.ok) {
+      const messages: Record<typeof result.code, string> = {
+        forbidden: "Apenas o facilitador pode marcar observadores",
+        invalid_target: "Participante inválido",
+      };
+      return this.sendError(ws, result.code, messages[result.code]);
+    }
+
+    sql.exec(
+      "UPDATE participants SET is_observer = ? WHERE participant_id = ?",
+      result.observer ? 1 : 0,
+      message.participantId,
+    );
+    if (result.discardVote) {
+      sql.exec(
+        "DELETE FROM votes WHERE round_number = ? AND session_id = ?",
+        room.current_round,
+        target!.session_id,
+      );
+    }
     this.broadcastRoomState();
   }
 
