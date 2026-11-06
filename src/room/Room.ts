@@ -7,6 +7,7 @@ import {
   type ServerMessage,
   clientMessageSchema,
   joinMessageSchema,
+  setTitleMessageSchema,
 } from "@shared/protocol.ts";
 import { generateId } from "@shared/ids.ts";
 import { ROOM_TTL_MS } from "@shared/limits.ts";
@@ -15,6 +16,7 @@ import { registerParticipant } from "@domain/participants.ts";
 import { buildPresence, isConnected } from "@domain/presence.ts";
 import { castVote } from "@domain/voting.ts";
 import { setObserver } from "@domain/observers.ts";
+import { setTitle } from "@domain/rounds.ts";
 import { canReveal, missingVotes, reveal } from "@domain/reveal.ts";
 import type { Participant } from "@domain/types.ts";
 import { constantTimeEqual, sha256Hex } from "./hash.ts";
@@ -102,6 +104,13 @@ export class Room extends DurableObject<Env> {
           "Nome inválido: use de 1 a 45 caracteres",
         );
       }
+      if (this.isInvalidTitle(data)) {
+        return this.sendError(
+          ws,
+          "validation_error",
+          "Título inválido: use até 250 caracteres",
+        );
+      }
       return this.sendError(ws, "invalid_message", "Mensagem inválida");
     }
     const attachment = ws.deserializeAttachment() as Attachment | null;
@@ -116,6 +125,9 @@ export class Room extends DurableObject<Env> {
     }
     if (message.type === "set_observer") {
       return this.handleSetObserver(ws, attachment!.sessionId, message);
+    }
+    if (message.type === "set_title") {
+      return this.handleSetTitle(ws, attachment!.sessionId, message.title);
     }
     if (message.type === "reveal") {
       return this.handleReveal(ws, attachment!.sessionId);
@@ -345,6 +357,52 @@ export class Room extends DurableObject<Env> {
     this.broadcastRoomState();
   }
 
+  private handleSetTitle(
+    ws: WebSocket,
+    sessionId: string,
+    title: string,
+  ): void {
+    const sql = this.ctx.storage.sql;
+    const room = sql
+      .exec<{ current_round: number }>("SELECT current_round FROM room")
+      .toArray()[0];
+    const actor = sql
+      .exec<{ is_facilitator: number }>(
+        "SELECT is_facilitator FROM participants WHERE session_id = ?",
+        sessionId,
+      )
+      .toArray()[0];
+    const round = room
+      ? sql
+          .exec<{ status: "voting" | "revealed" | "archived" }>(
+            "SELECT status FROM rounds WHERE number = ?",
+            room.current_round,
+          )
+          .toArray()[0]
+      : undefined;
+    if (!room || !actor || !round) return;
+
+    const result = setTitle({
+      actor: { isFacilitator: actor.is_facilitator === 1 },
+      roundStatus: round.status,
+      title,
+    });
+    if (!result.ok) {
+      const messages: Record<typeof result.code, string> = {
+        forbidden: "Apenas o facilitador pode definir o título",
+        round_not_voting: "A rodada não está em votação",
+      };
+      return this.sendError(ws, result.code, messages[result.code]);
+    }
+
+    sql.exec(
+      "UPDATE rounds SET title = ? WHERE number = ?",
+      result.title,
+      room.current_round,
+    );
+    this.broadcastRoomState();
+  }
+
   private handleReveal(ws: WebSocket, sessionId: string): void {
     const sql = this.ctx.storage.sql;
     const room = sql
@@ -556,6 +614,22 @@ export class Room extends DurableObject<Env> {
     return (
       !parsed.success &&
       parsed.error.issues.every((issue) => issue.path[0] === "displayName")
+    );
+  }
+
+  /** `set_title` bem formado cujo único problema é o `title` (FR-008). */
+  private isInvalidTitle(data: string | ArrayBuffer): boolean {
+    if (typeof data !== "string") return false;
+    let json: unknown;
+    try {
+      json = JSON.parse(data);
+    } catch {
+      return false;
+    }
+    const parsed = setTitleMessageSchema.safeParse(json);
+    return (
+      !parsed.success &&
+      parsed.error.issues.every((issue) => issue.path[0] === "title")
     );
   }
 

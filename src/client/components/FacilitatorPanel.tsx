@@ -1,19 +1,50 @@
+import { useState } from "react";
+import { ROUND_TITLE_MAX } from "@shared/limits.ts";
 import { Button } from "@base-ui/react/button";
 
 export function FacilitatorPanel({
   canReveal,
   missingVotes,
+  title,
+  onSetTitle,
   onReveal,
 }: {
   canReveal: boolean;
   missingVotes: number;
+  title: string | null;
+  onSetTitle: (title: string) => void;
   onReveal: () => void;
 }) {
+  const [draft, setDraft] = useState(title ?? "");
   return (
     <section aria-labelledby="facilitator-heading">
       <h2 id="facilitator-heading" className="text-lg font-semibold">
         Facilitador
       </h2>
+      <form
+        className="mt-3 flex items-end gap-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          onSetTitle(draft);
+        }}
+      >
+        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">
+          Título da rodada
+          <input
+            type="text"
+            value={draft}
+            maxLength={ROUND_TITLE_MAX}
+            onChange={(event) => setDraft(event.target.value)}
+            className="rounded-md border border-slate-300 px-3 py-2 font-normal"
+          />
+        </label>
+        <Button
+          type="submit"
+          className="rounded-md border border-slate-300 px-4 py-2 font-medium hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2"
+        >
+          Salvar título
+        </Button>
+      </form>
       <div className="mt-3 flex items-center gap-3">
         <Button
           disabled={!canReveal}
