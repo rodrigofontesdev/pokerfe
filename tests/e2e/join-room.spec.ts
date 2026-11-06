@@ -24,6 +24,8 @@ test("participante entra pelo link com nome e avatar e todos o veem", async ({
   await page.getByRole("button", { name: "Entrar" }).click();
 
   await expect(page.getByRole("heading", { name: "Sprint 42" })).toBeVisible();
+  // A página do facilitador (Fátima) passa a listar a participante Ana.
+  await expect(facilitator.getByText("Fátima", { exact: true })).toBeVisible();
   await expect(facilitator.getByText("Ana", { exact: true })).toBeVisible();
   await expect(
     facilitator.getByRole("img", { name: "Raposa" }).first(),
@@ -76,4 +78,7 @@ test("sala inexistente mostra aviso e leva para criar nova sala", async ({
 
   await page.goto("/r/invalido");
   await expect(page.getByText("Sala não encontrada ou expirada")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Criar nova sala" }),
+  ).toBeVisible();
 });
