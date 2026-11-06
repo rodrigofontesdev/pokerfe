@@ -51,6 +51,7 @@ export type RoomConnectionOptions = {
 export function createRoomConnection(options: RoomConnectionOptions): {
   close: () => void;
   join: (profile: Profile) => void;
+  vote: (card: string) => void;
 } {
   const url = options.url ?? buildWsUrl(options.roomId);
   const socket = (options.createSocket ?? ((u) => new WebSocket(u)))(url);
@@ -107,6 +108,10 @@ export function createRoomConnection(options: RoomConnectionOptions): {
     close() {
       closed = true;
       socket.close();
+    },
+    vote(card) {
+      if (closed || !opened) return;
+      socket.send(JSON.stringify({ type: "vote", card }));
     },
     join(profile) {
       if (closed) return;

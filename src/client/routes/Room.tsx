@@ -3,6 +3,7 @@ import { isValidId } from "@shared/ids.ts";
 import { JoinForm } from "@client/components/JoinForm.tsx";
 import { RoomNotFound } from "@client/components/RoomNotFound.tsx";
 import { Avatar } from "@client/components/Avatar.tsx";
+import { CardDeck } from "@client/components/CardDeck.tsx";
 import { ParticipantList } from "@client/components/ParticipantList.tsx";
 import { getFacilitatorToken } from "@client/storage/local.ts";
 import { useRoomConnection } from "@client/realtime/useRoomConnection.ts";
@@ -13,7 +14,7 @@ export function Room({ roomId }: { roomId: string }) {
 }
 
 function ConnectedRoom({ roomId }: { roomId: string }) {
-  const { roomState, notFound, lastError, status, join } =
+  const { roomState, notFound, lastError, status, join, vote } =
     useRoomConnection(roomId);
   const [copied, setCopied] = useState<"ok" | "error" | null>(null);
 
@@ -78,6 +79,18 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
             <span className="text-sm text-slate-600">Facilitador</span>
           )}
         </section>
+      )}
+      {roomState.round.status === "voting" && (
+        <div className="mt-6">
+          <CardDeck
+            deck={roomState.room.deck}
+            deckType={roomState.room.deckType}
+            myVote={roomState.you.myVote}
+            isFacilitator={roomState.you.isFacilitator}
+            isObserver={roomState.you.isObserver}
+            onVote={vote}
+          />
+        </div>
       )}
       <div className="mt-6">
         <ParticipantList
