@@ -14,7 +14,6 @@ interface RevealInput {
   votedSessionIds: ReadonlySet<string>;
 }
 
-/** Votantes esperados: conectados, nem facilitador nem observador (FR-020). */
 function expectedVoters(participants: readonly RevealParticipant[]) {
   return participants.filter(
     (p) => p.connected && !p.isFacilitator && !p.isObserver,
