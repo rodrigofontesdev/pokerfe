@@ -224,12 +224,12 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 8
 
-- [ ] T062 [P] [US8] Teste de integração em `tests/integration/title.test.ts`: título de até 250 caracteres aceito e 251 recusado com `validation_error`; vazio limpa o título (gravado como NULL); `forbidden` para não facilitador; `round_not_voting` após a revelação — [FR-008, FR-017, FR-021]
+- [X] T062 [P] [US8] Teste de integração em `tests/integration/title.test.ts`: título de até 250 caracteres aceito e 251 recusado com `validation_error`; vazio limpa o título (gravado como NULL); `forbidden` para não facilitador; `round_not_voting` após a revelação — [FR-008, FR-017, FR-021]
 
 ### Implementation for User Story 8
 
-- [ ] T063 [US8] Implementar `setTitle` em `src/domain/rounds.ts` e o handler `set_title` em `src/room/Room.ts` (`title` "0 a 250 caracteres após remover espaços nas pontas") — [FR-008, FR-017]
-- [ ] T064 [US8] Adicionar o campo de título da rodada ao `src/client/components/FacilitatorPanel.tsx` e exibir o título atual para todos em `src/client/routes/Room.tsx` — [FR-017]
+- [X] T063 [US8] Implementar `setTitle` em `src/domain/rounds.ts` e o handler `set_title` em `src/room/Room.ts` (`title` "0 a 250 caracteres após remover espaços nas pontas") — [FR-008, FR-017]
+- [X] T064 [US8] Adicionar o campo de título da rodada ao `src/client/components/FacilitatorPanel.tsx` e exibir o título atual para todos em `src/client/routes/Room.tsx` — [FR-017]
 
 **Checkpoint**: rodadas tituladas.
 
