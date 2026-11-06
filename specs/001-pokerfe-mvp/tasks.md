@@ -203,14 +203,14 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 7
 
-- [ ] T057 [P] [US7] Testes unitários em `tests/unit/domain/stats.test.ts` com os exemplos da US07: 3, 5, 5, 8 → mediana 5, modas [5]; 3, 3, 8, 8 → mediana 5,5, modas [3, 8]; 2, 3, 5 → mediana 3, modas [] ("Sem moda"); baralho de tempo convertendo `0.5` em 0,5; distribuição só com cartas que receberam voto, na ordem do baralho — [FR-014]
-- [ ] T058 [P] [US7] Testes unitários em `tests/unit/client/format.test.ts`: mediana 5.5 exibida como "5,5", sufixo `h` no baralho de tempo, `[]` exibido como "Sem moda" — [FR-014]
-- [ ] T059 [P] [US7] Teste e2e em `tests/e2e/result.spec.ts`: revelar os votos 3, 5, 5 e 8 e verificar que todos os participantes veem mediana 5, moda 5 e a distribuição, sem média simples (completa o cenário 3 da US06) — [FR-014, FR-016]
+- [X] T057 [P] [US7] Testes unitários em `tests/unit/domain/stats.test.ts` com os exemplos da US07: 3, 5, 5, 8 → mediana 5, modas [5]; 3, 3, 8, 8 → mediana 5,5, modas [3, 8]; 2, 3, 5 → mediana 3, modas [] ("Sem moda"); baralho de tempo convertendo `0.5` em 0,5; distribuição só com cartas que receberam voto, na ordem do baralho — [FR-014]
+- [X] T058 [P] [US7] Testes unitários em `tests/unit/client/format.test.ts`: mediana 5.5 exibida como "5,5", sufixo `h` no baralho de tempo, `[]` exibido como "Sem moda" — [FR-014]
+- [X] T059 [P] [US7] Teste e2e em `tests/e2e/result.spec.ts`: revelar os votos 3, 5, 5 e 8 e verificar que todos os participantes veem mediana 5, moda 5 e a distribuição, sem média simples (completa o cenário 3 da US06) — [FR-014, FR-016]
 
 ### Implementation for User Story 7
 
-- [ ] T060 [US7] Implementar `computeResult` em `src/domain/stats.ts` (mediana, modas, distribuição) e usá-lo na revelação (T055), gravando `median` e `mode` (array JSON) em `rounds` — [FR-014]
-- [ ] T061 [US7] Criar `src/client/format.ts` (formatação pt-BR) e `src/client/components/ResultPanel.tsx` com mediana, moda e distribuição, sem média — [FR-014]
+- [X] T060 [US7] Implementar `computeResult` em `src/domain/stats.ts` (mediana, modas, distribuição) e usá-lo na revelação (T055), gravando `median` e `mode` (array JSON) em `rounds` — [FR-014]
+- [X] T061 [US7] Criar `src/client/format.ts` (formatação pt-BR) e `src/client/components/ResultPanel.tsx` com mediana, moda e distribuição, sem média — [FR-014]
 
 **Checkpoint**: resultado exibido corretamente.
 
