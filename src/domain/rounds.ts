@@ -3,7 +3,6 @@ export type SetTitleRefusal = "forbidden" | "round_not_voting";
 export type SetTitleResult =
   { ok: true; title: string | null } | { ok: false; code: SetTitleRefusal };
 
-/** O título já chega aparado pelo schema; vazio vira `null` (FR-017). */
 export function setTitle(input: {
   actor: { isFacilitator: boolean };
   roundStatus: "voting" | "revealed" | "archived";

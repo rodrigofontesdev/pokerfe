@@ -617,7 +617,6 @@ export class Room extends DurableObject<Env> {
     );
   }
 
-  /** `set_title` bem formado cujo único problema é o `title` (FR-008). */
   private isInvalidTitle(data: string | ArrayBuffer): boolean {
     if (typeof data !== "string") return false;
     let json: unknown;
