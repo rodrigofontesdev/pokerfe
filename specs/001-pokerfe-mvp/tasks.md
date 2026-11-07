@@ -380,6 +380,12 @@ Task: "Teste e2e em tests/e2e/vote.spec.ts"
 4. US08, US09 → planning completa (Sprint 2 do documento).
 5. US10, US11 e Polish → go-live (Sprint 3 do documento).
 
+## Phase 16: Convergence
+
+- [ ] T094 [P] [US8] Teste em `tests/unit/client/` (ou e2e em `tests/e2e/`) verificando que a rodada em andamento sem título é exibida como "Rodada N" para todos e que, com título, o título substitui o fallback per FR-017, US08/AC2 (missing)
+- [ ] T095 [US8] Exibir "Rodada N" (N = `round.number`) em `src/client/routes/Room.tsx` quando `round.title` for nulo, para todos os participantes per FR-017, US08/AC2 (missing)
+
+
 ## Notes
 
 - `[P]` = arquivos diferentes, sem dependência de tarefa incompleta.
