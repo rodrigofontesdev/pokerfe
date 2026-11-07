@@ -243,14 +243,14 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 9
 
-- [ ] T065 [P] [US9] Testes unitários em `tests/unit/domain/rounds.test.ts`: `new_round` só em `revealed`; arquiva a rodada; cria N+1 em `voting` sem votos; histórico da mais recente para a mais antiga — [FR-018, FR-019]
-- [ ] T066 [P] [US9] Teste de integração em `tests/integration/new-round.test.ts`: `round_not_revealed`, `forbidden`; `new_round` renova `last_activity_at` e o Alarm; `history` presente no `room_state` de todos os participantes (FR-019) — [FR-018, FR-019, FR-021, FR-023]
-- [ ] T067 [P] [US9] Teste e2e em `tests/e2e/history.spec.ts` cobrindo os cenários 1 a 3 da US09 — [FR-018, FR-019]
+- [X] T065 [P] [US9] Testes unitários em `tests/unit/domain/rounds.test.ts`: `new_round` só em `revealed`; arquiva a rodada; cria N+1 em `voting` sem votos; histórico da mais recente para a mais antiga — [FR-018, FR-019]
+- [X] T066 [P] [US9] Teste de integração em `tests/integration/new-round.test.ts`: `round_not_revealed`, `forbidden`; `new_round` renova `last_activity_at` e o Alarm; `history` presente no `room_state` de todos os participantes (FR-019) — [FR-018, FR-019, FR-021, FR-023]
+- [X] T067 [P] [US9] Teste e2e em `tests/e2e/history.spec.ts` cobrindo os cenários 1 a 3 da US09 — [FR-018, FR-019]
 
 ### Implementation for User Story 9
 
-- [ ] T068 [US9] Implementar `newRound` em `src/domain/rounds.ts`, o handler `new_round` em `src/room/Room.ts` e a montagem de `history` no `room_state` — [FR-018, FR-019, FR-023]
-- [ ] T069 [US9] Adicionar o botão "Nova rodada" (habilitado só com a rodada revelada) ao `src/client/components/FacilitatorPanel.tsx` e criar `src/client/components/HistoryList.tsx` (título ou "Rodada N", mediana e moda) visível para todos — [FR-018, FR-019]
+- [X] T068 [US9] Implementar `newRound` em `src/domain/rounds.ts`, o handler `new_round` em `src/room/Room.ts` e a montagem de `history` no `room_state` — [FR-018, FR-019, FR-023]
+- [X] T069 [US9] Adicionar o botão "Nova rodada" (habilitado só com a rodada revelada) ao `src/client/components/FacilitatorPanel.tsx` e criar `src/client/components/HistoryList.tsx` (título ou "Rodada N", mediana e moda) visível para todos — [FR-018, FR-019]
 
 **Checkpoint**: planning completa com várias rodadas (escopo das 9 histórias P1).
 

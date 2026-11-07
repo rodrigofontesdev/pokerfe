@@ -19,6 +19,7 @@ export function useRoomConnection(roomId: string): {
   setObserver: (participantId: string, observer: boolean) => void;
   setTitle: (title: string) => void;
   reveal: () => void;
+  newRound: () => void;
 } {
   const [roomState, setRoomState] = useState<RoomState | null>(null);
   const [lastError, setLastError] = useState<ErrorMessage | null>(null);
@@ -70,6 +71,10 @@ export function useRoomConnection(roomId: string): {
     connectionRef.current?.reveal();
   }, []);
 
+  const newRound = useCallback(() => {
+    connectionRef.current?.newRound();
+  }, []);
+
   return {
     roomState,
     lastError,
@@ -80,5 +85,6 @@ export function useRoomConnection(roomId: string): {
     setObserver,
     setTitle,
     reveal,
+    newRound,
   };
 }

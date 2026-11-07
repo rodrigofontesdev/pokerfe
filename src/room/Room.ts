@@ -16,7 +16,7 @@ import { registerParticipant } from "@domain/participants.ts";
 import { buildPresence, isConnected } from "@domain/presence.ts";
 import { castVote } from "@domain/voting.ts";
 import { setObserver } from "@domain/observers.ts";
-import { setTitle } from "@domain/rounds.ts";
+import { newRound, setTitle, sortHistory } from "@domain/rounds.ts";
 import { canReveal, missingVotes, reveal } from "@domain/reveal.ts";
 import { computeResult } from "@domain/stats.ts";
 import type { Participant } from "@domain/types.ts";
@@ -132,6 +132,9 @@ export class Room extends DurableObject<Env> {
     }
     if (message.type === "reveal") {
       return this.handleReveal(ws, attachment!.sessionId);
+    }
+    if (message.type === "new_round") {
+      return this.handleNewRound(ws, attachment!.sessionId);
     }
     // Os demais handlers chegam nas issues das histórias.
     this.sendError(ws, "invalid_message", "Mensagem não suportada");
@@ -480,6 +483,61 @@ export class Room extends DurableObject<Env> {
     this.broadcastRoomState();
   }
 
+  private async handleNewRound(
+    ws: WebSocket,
+    sessionId: string,
+  ): Promise<void> {
+    const sql = this.ctx.storage.sql;
+    const room = sql
+      .exec<{ current_round: number }>("SELECT current_round FROM room")
+      .toArray()[0];
+    const actor = sql
+      .exec<{ is_facilitator: number }>(
+        "SELECT is_facilitator FROM participants WHERE session_id = ?",
+        sessionId,
+      )
+      .toArray()[0];
+    const round = room
+      ? sql
+          .exec<{ status: "voting" | "revealed" | "archived" }>(
+            "SELECT status FROM rounds WHERE number = ?",
+            room.current_round,
+          )
+          .toArray()[0]
+      : undefined;
+    if (!room || !actor || !round) return;
+
+    const result = newRound({
+      actor: { isFacilitator: actor.is_facilitator === 1 },
+      roundStatus: round.status,
+      currentRound: room.current_round,
+    });
+    if (!result.ok) {
+      const messages: Record<typeof result.code, string> = {
+        forbidden: "Apenas o facilitador pode iniciar uma nova rodada",
+        round_not_revealed: "A rodada ainda não foi revelada",
+      };
+      return this.sendError(ws, result.code, messages[result.code]);
+    }
+
+    const now = Date.now();
+    sql.exec(
+      "UPDATE rounds SET status = 'archived' WHERE number = ?",
+      result.archivedRound,
+    );
+    sql.exec(
+      "INSERT INTO rounds (number, title, status, median, mode, revealed_at) VALUES (?, NULL, 'voting', NULL, NULL, NULL)",
+      result.nextRound,
+    );
+    sql.exec(
+      "UPDATE room SET current_round = ?, last_activity_at = ?",
+      result.nextRound,
+      now,
+    );
+    await this.ctx.storage.setAlarm(now + ROOM_TTL_MS);
+    this.broadcastRoomState();
+  }
+
   /** Envia a cada conexão com `join` feito o `room_state` personalizado. */
   broadcastRoomState(): void {
     for (const ws of this.ctx.getWebSockets()) {
@@ -563,14 +621,14 @@ export class Room extends DurableObject<Env> {
         }
       : null;
 
-    const history = sql
+    const archived = sql
       .exec<{
         number: number;
         title: string | null;
         median: number | null;
         mode: string | null;
       }>(
-        "SELECT number, title, median, mode FROM rounds WHERE status = 'archived' ORDER BY number DESC",
+        "SELECT number, title, median, mode FROM rounds WHERE status = 'archived'",
       )
       .toArray()
       .map((r) => ({
@@ -579,6 +637,7 @@ export class Room extends DurableObject<Env> {
         median: r.median,
         modes: JSON.parse(r.mode ?? "[]") as number[],
       }));
+    const history = sortHistory(archived);
 
     return {
       type: "room_state",
