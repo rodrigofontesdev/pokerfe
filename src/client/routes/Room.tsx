@@ -25,6 +25,7 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
     join,
     vote,
     setObserver,
+    setTitle,
     reveal,
   } = useRoomConnection(roomId);
   const [copied, setCopied] = useState<"ok" | "error" | null>(null);
@@ -82,6 +83,11 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
           </span>
         </div>
       </header>
+      {roomState.round.title && (
+        <h2 className="mt-6 text-xl font-semibold break-words">
+          {roomState.round.title}
+        </h2>
+      )}
       {me && (
         <section className="mt-6 flex items-center gap-3">
           <Avatar avatarId={me.avatarId} displayName={me.displayName} />
@@ -108,6 +114,8 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
           <FacilitatorPanel
             canReveal={roomState.round.canReveal}
             missingVotes={roomState.round.missingVotes}
+            title={roomState.round.title}
+            onSetTitle={setTitle}
             onReveal={reveal}
           />
         </div>

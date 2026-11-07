@@ -17,6 +17,7 @@ export function useRoomConnection(roomId: string): {
   join: (profile: Profile) => void;
   vote: (card: string) => void;
   setObserver: (participantId: string, observer: boolean) => void;
+  setTitle: (title: string) => void;
   reveal: () => void;
 } {
   const [roomState, setRoomState] = useState<RoomState | null>(null);
@@ -61,6 +62,10 @@ export function useRoomConnection(roomId: string): {
     [],
   );
 
+  const setTitle = useCallback((title: string) => {
+    connectionRef.current?.setTitle(title);
+  }, []);
+
   const reveal = useCallback(() => {
     connectionRef.current?.reveal();
   }, []);
@@ -73,6 +78,7 @@ export function useRoomConnection(roomId: string): {
     join,
     vote,
     setObserver,
+    setTitle,
     reveal,
   };
 }
