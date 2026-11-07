@@ -5,6 +5,7 @@ import { RoomNotFound } from "@client/components/RoomNotFound.tsx";
 import { Avatar } from "@client/components/Avatar.tsx";
 import { CardDeck } from "@client/components/CardDeck.tsx";
 import { FacilitatorPanel } from "@client/components/FacilitatorPanel.tsx";
+import { ResultPanel } from "@client/components/ResultPanel.tsx";
 import { RevealedCards } from "@client/components/RevealedCards.tsx";
 import { ParticipantList } from "@client/components/ParticipantList.tsx";
 import { getFacilitatorToken } from "@client/storage/local.ts";
@@ -116,6 +117,14 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
           <RevealedCards
             votes={roomState.round.votes}
             participants={roomState.participants}
+            deckType={roomState.room.deckType}
+          />
+        </div>
+      )}
+      {roomState.round.status === "revealed" && roomState.round.result && (
+        <div className="mt-6">
+          <ResultPanel
+            result={roomState.round.result}
             deckType={roomState.room.deckType}
           />
         </div>

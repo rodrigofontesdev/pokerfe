@@ -16,6 +16,7 @@ import { buildPresence, isConnected } from "@domain/presence.ts";
 import { castVote } from "@domain/voting.ts";
 import { setObserver } from "@domain/observers.ts";
 import { canReveal, missingVotes, reveal } from "@domain/reveal.ts";
+import { computeResult } from "@domain/stats.ts";
 import type { Participant } from "@domain/types.ts";
 import { constantTimeEqual, sha256Hex } from "./hash.ts";
 import { applySchema } from "./schema.ts";
@@ -400,9 +401,22 @@ export class Room extends DurableObject<Env> {
       return this.sendError(ws, result.code, messages[result.code]);
     }
 
+    const deckRow = sql
+      .exec<{ deck_type: DeckType }>("SELECT deck_type FROM room")
+      .toArray()[0]!;
+    const cards = sql
+      .exec<{ card: string }>(
+        "SELECT card FROM votes WHERE round_number = ?",
+        room.current_round,
+      )
+      .toArray()
+      .map((v) => v.card);
+    const stats = computeResult(cards, DECKS[deckRow.deck_type]);
     sql.exec(
-      "UPDATE rounds SET status = 'revealed', revealed_at = ? WHERE number = ?",
+      "UPDATE rounds SET status = 'revealed', revealed_at = ?, median = ?, mode = ? WHERE number = ?",
       Date.now(),
+      stats.median,
+      JSON.stringify(stats.modes),
       room.current_round,
     );
     this.broadcastRoomState();
@@ -484,12 +498,10 @@ export class Room extends DurableObject<Env> {
       ? {
           median: round.median,
           modes: JSON.parse(round.mode ?? "[]") as number[],
-          distribution: deck
-            .map((card) => ({
-              card: card as string,
-              count: votes.filter((v) => v.card === card).length,
-            }))
-            .filter((d) => d.count > 0),
+          distribution: computeResult(
+            votes.map((v) => v.card),
+            deck,
+          ).distribution,
         }
       : null;
 
