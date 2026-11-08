@@ -8,8 +8,6 @@ export interface Credit {
   text: string;
 }
 
-// Termo do Flaticon por avatar, exatamente como fornecido pelo responsável
-// pelo produto (a girafa usa "africa").
 const FLATICON_TERMS: Record<AvatarId, string> = {
   eagle: "eagle",
   horse: "horse",
