@@ -7,7 +7,8 @@ import {
 } from "@client/storage/local.ts";
 import { createRoomConnection, type ErrorMessage } from "./connection.ts";
 
-export type ConnectionStatus = "connecting" | "open" | "closed";
+export type ConnectionStatus =
+  "connecting" | "open" | "reconnecting" | "closed";
 
 export function useRoomConnection(roomId: string): {
   roomState: RoomState | null;
@@ -39,6 +40,7 @@ export function useRoomConnection(roomId: string): {
       onError: setLastError,
       onNotFound: () => setNotFound(true),
       onClose: () => setStatus("closed"),
+      onReconnecting: () => setStatus("reconnecting"),
     });
     connectionRef.current = connection;
     return () => {
