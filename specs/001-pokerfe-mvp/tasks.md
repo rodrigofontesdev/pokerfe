@@ -284,12 +284,12 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 11
 
-- [ ] T074 [P] [US11] Teste de integração em `tests/integration/expiration.test.ts` com `runDurableObjectAlarm`: após o Alarm, o armazenamento fica vazio, conexões abertas recebem fechamento 4404 e nova conexão também recebe 4404; `join` sem voto nem nova rodada NÃO altera `last_activity_at` nem o Alarm (FR-023) — [FR-007, FR-023]
-- [ ] T075 [P] [US11] Teste e2e em `tests/e2e/reopen.spec.ts`: recarregar o link de uma sala com rodadas arquivadas mostra o histórico completo — [FR-019, FR-023]
+- [X] T074 [P] [US11] Teste de integração em `tests/integration/expiration.test.ts` com `runDurableObjectAlarm`: após o Alarm, o armazenamento fica vazio, conexões abertas recebem fechamento 4404 e nova conexão também recebe 4404; `join` sem voto nem nova rodada NÃO altera `last_activity_at` nem o Alarm (FR-023) — [FR-007, FR-023]
+- [X] T075 [P] [US11] Teste e2e em `tests/e2e/reopen.spec.ts`: recarregar o link de uma sala com rodadas arquivadas mostra o histórico completo — [FR-019, FR-023]
 
 ### Implementation for User Story 11
 
-- [ ] T076 [US11] Implementar `alarm()` em `src/room/Room.ts`: fecha todas as conexões com 4404 e apaga o armazenamento com `deleteAll()` (research R-05) — [FR-023]
+- [X] T076 [US11] Implementar `alarm()` em `src/room/Room.ts`: fecha todas as conexões com 4404 e apaga o armazenamento com `deleteAll()` (research R-05) — [FR-023]
 
 **Checkpoint**: todas as histórias funcionando.
 

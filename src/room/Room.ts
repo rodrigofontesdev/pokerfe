@@ -86,10 +86,11 @@ export class Room extends DurableObject<Env> {
   }
 
   override async alarm(): Promise<void> {
-    if (this.roomExists()) return;
     for (const ws of this.ctx.getWebSockets()) {
       ws.close(ROOM_NOT_FOUND_CLOSE_CODE, "room_not_found");
     }
+    await this.ctx.storage.deleteAll();
+    applySchema(this.ctx.storage.sql);
   }
 
   override async webSocketMessage(
