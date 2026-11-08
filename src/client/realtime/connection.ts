@@ -12,7 +12,6 @@ import {
 
 export const ROOM_NOT_FOUND_CLOSE_CODE = 4404;
 
-/** Tentativas após 0,5 s, 1 s, 2 s e depois a cada 2 s (research R-09). */
 const RECONNECT_DELAYS_MS = [500, 1000, 2000];
 
 export type ErrorMessage = Extract<
@@ -49,7 +48,6 @@ export type RoomConnectionOptions = {
   /** Aguarda `join()` em vez de entrar ao abrir a conexão. */
   deferJoin?: boolean;
   onClose?: (code: number) => void;
-  /** Conexão caiu e uma nova tentativa foi agendada (research R-09). */
   onReconnecting?: () => void;
 };
 

@@ -32,7 +32,7 @@ async function until(
   }
 }
 
-describe("reconexão (FR-022)", () => {
+describe("reconexão", () => {
   it("novo join com o mesmo sessionId recupera papel e voto em votação", async () => {
     const { roomId, facilitatorToken } = await createRoom();
     const fac = await join(roomId, { facilitatorToken, displayName: "Fac" });
@@ -73,7 +73,6 @@ describe("reconexão (FR-022)", () => {
     const anaId = ana.state.you.participantId;
     ana.socket.send({ type: "vote", card: "5" });
     await until(ana.socket, (s) => s.you.myVote === "5");
-    // Reveal exige ao menos um votante conectado (FR-012).
     const bia = await join(roomId, { displayName: "Bia" });
     bia.socket.send({ type: "vote", card: "3" });
     await until(bia.socket, (s) => s.you.myVote === "3");

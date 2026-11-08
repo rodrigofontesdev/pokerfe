@@ -80,9 +80,7 @@ const card = (page: Page, label: string) =>
 
 const banner = (page: Page) => page.getByText("Conexão perdida. Reconectando…");
 
-test("cenário 1: volta com nome, avatar e voto 5 em até 5 s", async ({
-  browser,
-}) => {
+test("volta com nome, avatar e voto 5 em até 5 s", async ({ browser }) => {
   const { page: facilitator, url } = await createRoom(browser);
   const { page, context } = await joinAs(browser, url, "Ana");
   await card(page, "5").click();
@@ -100,9 +98,7 @@ test("cenário 1: volta com nome, avatar e voto 5 em até 5 s", async ({
   await expect(card(page, "5")).toBeChecked();
 });
 
-test("cenário 2: após reconectar em votação, troca a carta", async ({
-  browser,
-}) => {
+test("após reconectar em votação, troca a carta", async ({ browser }) => {
   const { url } = await createRoom(browser);
   const { page, context } = await joinAs(browser, url, "Ana");
   await card(page, "5").click();
@@ -117,9 +113,7 @@ test("cenário 2: após reconectar em votação, troca a carta", async ({
   await expect(card(page, "5")).not.toBeChecked();
 });
 
-test("cenário 3: revelação durante a queda aparece ao reconectar", async ({
-  browser,
-}) => {
+test("revelação durante a queda aparece ao reconectar", async ({ browser }) => {
   const { page: facilitator, url } = await createRoom(browser);
   const { page, context } = await joinAs(browser, url, "Ana");
   const bia = await joinAs(browser, url, "Bia");
