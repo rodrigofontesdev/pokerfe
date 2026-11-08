@@ -1,7 +1,5 @@
 import { expect, test, type Browser } from "@playwright/test";
 
-// FR-026: interface somente em pt-BR, inclusive mensagens de erro vindas do servidor.
-
 const ENGLISH =
   /\b(the|and|please|room|name|enter|join|vote|reveal|error|invalid|required|failed|cancel|submit|save|loading|connected|disconnected|waiting|participants?|history|round|share|copy|credits|back)\b/i;
 

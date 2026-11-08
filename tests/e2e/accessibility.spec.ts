@@ -6,8 +6,6 @@ import {
   type Page,
 } from "@playwright/test";
 
-// SC-005: cartas navegáveis por teclado e contraste mínimo AA.
-
 async function createRoom(browser: Browser) {
   const context = await browser.newContext();
   const page = await context.newPage();

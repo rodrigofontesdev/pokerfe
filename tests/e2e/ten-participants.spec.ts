@@ -1,8 +1,5 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
 
-// SC-001 e SC-003: 10 participantes simultâneos concluem uma rodada completa
-// e um voto aparece para os demais em menos de 500 ms.
-
 const PARTICIPANTS = 10;
 const VOTE_LATENCY_MS = 500;
 
