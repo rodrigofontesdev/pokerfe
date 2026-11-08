@@ -90,8 +90,6 @@ export class Room extends DurableObject<Env> {
       ws.close(ROOM_NOT_FOUND_CLOSE_CODE, "room_not_found");
     }
     await this.ctx.storage.deleteAll();
-    // deleteAll remove as tabelas; recria o esquema vazio para a instância viva
-    // continuar respondendo 4404 a novas conexões.
     applySchema(this.ctx.storage.sql);
   }
 

@@ -24,7 +24,7 @@ async function join(roomId: string, name = "Ana") {
   return { socket, state };
 }
 
-describe("expiração em 30 dias (FR-023, FR-007)", () => {
+describe("expiração em 30 dias", () => {
   it("após o Alarm apaga o armazenamento e fecha conexões abertas e novas com 4404", async () => {
     const { roomId } = await createRoom();
     const { socket } = await join(roomId);
