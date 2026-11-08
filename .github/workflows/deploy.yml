@@ -33,6 +33,11 @@ jobs:
       - run: npm ci
       - run: npm run build
       - uses: cloudflare/wrangler-action@v4
+        id: deploy
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:smoke
+        env:
+          SMOKE_BASE_URL: ${{ steps.deploy.outputs.deployment-url }}
