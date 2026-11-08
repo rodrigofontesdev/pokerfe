@@ -33,7 +33,7 @@ export function ParticipantList({
             <li
               key={p.participantId}
               className={`flex items-center gap-3 rounded-md border border-slate-200 px-3 py-2 ${
-                p.connected ? "" : "opacity-60"
+                p.connected ? "" : "border-dashed bg-slate-50"
               }`}
             >
               <Avatar avatarId={p.avatarId} displayName={p.displayName} />
