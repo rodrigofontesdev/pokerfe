@@ -264,13 +264,13 @@ histórias US01…US11 da spec.
 
 ### Tests for User Story 10
 
-- [ ] T070 [P] [US10] Testes unitários em `tests/unit/client/reconnect.test.ts` com timers falsos: tentativas em 0,5 s, 1 s, 2 s e depois a cada 2 s; nenhuma tentativa após fechamento 4404 — [FR-022]
-- [ ] T071 [P] [US10] Teste de integração em `tests/integration/reconnect.test.ts`: novo `join` com o mesmo `sessionId` recupera papel e voto da rodada em votação; após revelação ocorrida durante a queda, recebe a rodada revelada — [FR-020, FR-022]
-- [ ] T072 [P] [US10] Teste e2e em `tests/e2e/reconnect.spec.ts` usando `context.setOffline()` do Playwright para os cenários 1 a 3 da US10, verificando a reconexão em até 5 s (SC-002) — [FR-022]
+- [X] T070 [P] [US10] Testes unitários em `tests/unit/client/reconnect.test.ts` com timers falsos: tentativas em 0,5 s, 1 s, 2 s e depois a cada 2 s; nenhuma tentativa após fechamento 4404 — [FR-022]
+- [X] T071 [P] [US10] Teste de integração em `tests/integration/reconnect.test.ts`: novo `join` com o mesmo `sessionId` recupera papel e voto da rodada em votação; após revelação ocorrida durante a queda, recebe a rodada revelada — [FR-020, FR-022]
+- [X] T072 [P] [US10] Teste e2e em `tests/e2e/reconnect.spec.ts` usando `context.setOffline()` do Playwright para os cenários 1 a 3 da US10, verificando a reconexão em até 5 s (SC-002) — [FR-022]
 
 ### Implementation for User Story 10
 
-- [ ] T073 [US10] Adicionar a reconexão automática a `src/client/realtime/connection.ts` (research R-09), reenviando `join` com o mesmo `sessionId`, e um indicador de estado da conexão em `src/client/routes/Room.tsx` — [FR-022]
+- [X] T073 [US10] Adicionar a reconexão automática a `src/client/realtime/connection.ts` (research R-09), reenviando `join` com o mesmo `sessionId`, e um indicador de estado da conexão em `src/client/routes/Room.tsx` — [FR-022]
 
 **Checkpoint**: quedas não atrapalham a rodada.
 

@@ -69,6 +69,14 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-8">
+      {status === "reconnecting" && (
+        <p
+          role="status"
+          className="mb-4 rounded-md bg-amber-100 px-3 py-2 text-sm text-amber-900"
+        >
+          Conexão perdida. Reconectando…
+        </p>
+      )}
       <header className="flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">{roomState.room.name}</h1>
         <div className="flex items-center gap-3">
