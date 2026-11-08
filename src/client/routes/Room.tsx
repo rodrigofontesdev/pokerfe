@@ -6,6 +6,7 @@ import { Avatar } from "@client/components/Avatar.tsx";
 import { CardDeck } from "@client/components/CardDeck.tsx";
 import { FacilitatorPanel } from "@client/components/FacilitatorPanel.tsx";
 import { ResultPanel } from "@client/components/ResultPanel.tsx";
+import { roundHeading } from "@client/format.ts";
 import { RevealedCards } from "@client/components/RevealedCards.tsx";
 import { ParticipantList } from "@client/components/ParticipantList.tsx";
 import { getFacilitatorToken } from "@client/storage/local.ts";
@@ -83,11 +84,9 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
           </span>
         </div>
       </header>
-      {roomState.round.title && (
-        <h2 className="mt-6 text-xl font-semibold break-words">
-          {roomState.round.title}
-        </h2>
-      )}
+      <h2 className="mt-6 text-xl font-semibold break-words">
+        {roundHeading(roomState.round)}
+      </h2>
       {me && (
         <section className="mt-6 flex items-center gap-3">
           <Avatar avatarId={me.avatarId} displayName={me.displayName} />

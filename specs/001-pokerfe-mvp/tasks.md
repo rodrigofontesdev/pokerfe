@@ -382,8 +382,8 @@ Task: "Teste e2e em tests/e2e/vote.spec.ts"
 
 ## Phase 16: Convergence
 
-- [ ] T094 [P] [US8] Teste em `tests/unit/client/` (ou e2e em `tests/e2e/`) verificando que a rodada em andamento sem título é exibida como "Rodada N" para todos e que, com título, o título substitui o fallback per FR-017, US08/AC2 (missing)
-- [ ] T095 [US8] Exibir "Rodada N" (N = `round.number`) em `src/client/routes/Room.tsx` quando `round.title` for nulo, para todos os participantes per FR-017, US08/AC2 (missing)
+- [X] T094 [P] [US8] Teste em `tests/unit/client/` (ou e2e em `tests/e2e/`) verificando que a rodada em andamento sem título é exibida como "Rodada N" para todos e que, com título, o título substitui o fallback per FR-017, US08/AC2 (missing)
+- [X] T095 [US8] Exibir "Rodada N" (N = `round.number`) em `src/client/routes/Room.tsx` quando `round.title` for nulo, para todos os participantes per FR-017, US08/AC2 (missing)
 
 
 ## Notes
