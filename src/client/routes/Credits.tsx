@@ -1,7 +1,8 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { CREDITS } from "../credits.ts";
 
 export function Credits() {
+  const router = useRouter();
   return (
     <main className="mx-auto max-w-2xl p-6">
       <h1 className="mb-2 text-2xl font-bold">Créditos</h1>
@@ -22,11 +23,13 @@ export function Credits() {
           </li>
         ))}
       </ul>
-      <p className="mt-6">
-        <Link to="/" className="text-blue-700 underline">
-          Voltar ao início
-        </Link>
-      </p>
+      <button
+        type="button"
+        onClick={() => router.history.back()}
+        className="mt-6 text-blue-700 underline"
+      >
+        Voltar
+      </button>
     </main>
   );
 }

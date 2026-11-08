@@ -14,3 +14,10 @@ test("tela de Créditos lista 12 atribuições com links seguros", async ({
     await expect(link).toHaveAttribute("rel", "noopener noreferrer");
   }
 });
+
+test("Voltar retorna à tela anterior", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Créditos" }).click();
+  await page.getByRole("button", { name: "Voltar" }).click();
+  await expect(page).toHaveURL(/\/$/);
+});
