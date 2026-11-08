@@ -9,3 +9,7 @@ export function formatModes(modes: readonly number[], deckType: DeckType) {
   if (modes.length === 0) return "Sem moda";
   return modes.map((m) => formatNumber(m, deckType)).join(", ");
 }
+
+export function roundHeading(round: { number: number; title: string | null }): string {
+  return round.title ?? `Rodada ${round.number}`;
+}

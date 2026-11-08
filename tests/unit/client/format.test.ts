@@ -1,4 +1,4 @@
-import { formatModes, formatNumber } from "@client/format.ts";
+import { formatModes, formatNumber, roundHeading } from "@client/format.ts";
 import { describe, expect, it } from "vitest";
 
 describe("format", () => {
@@ -17,5 +17,15 @@ describe("format", () => {
 
   it("várias modas separadas por vírgula", () => {
     expect(formatModes([3, 8], "points")).toBe("3, 8");
+  });
+
+  it("rodada sem título é exibida como Rodada N", () => {
+    expect(roundHeading({ number: 3, title: null })).toBe("Rodada 3");
+  });
+
+  it("título da rodada substitui o fallback", () => {
+    expect(roundHeading({ number: 3, title: "Login com Google" })).toBe(
+      "Login com Google",
+    );
   });
 });
