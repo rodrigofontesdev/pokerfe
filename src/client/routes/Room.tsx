@@ -5,6 +5,7 @@ import { RoomNotFound } from "@client/components/RoomNotFound.tsx";
 import { Avatar } from "@client/components/Avatar.tsx";
 import { CardDeck } from "@client/components/CardDeck.tsx";
 import { FacilitatorPanel } from "@client/components/FacilitatorPanel.tsx";
+import { HistoryList } from "@client/components/HistoryList.tsx";
 import { ResultPanel } from "@client/components/ResultPanel.tsx";
 import { RevealedCards } from "@client/components/RevealedCards.tsx";
 import { ParticipantList } from "@client/components/ParticipantList.tsx";
@@ -27,6 +28,7 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
     setObserver,
     setTitle,
     reveal,
+    newRound,
   } = useRoomConnection(roomId);
   const [copied, setCopied] = useState<"ok" | "error" | null>(null);
 
@@ -109,14 +111,17 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
           />
         </div>
       )}
-      {roomState.you.isFacilitator && roomState.round.status === "voting" && (
+      {roomState.you.isFacilitator && (
         <div className="mt-6">
           <FacilitatorPanel
+            key={roomState.round.number}
+            revealed={roomState.round.status === "revealed"}
             canReveal={roomState.round.canReveal}
             missingVotes={roomState.round.missingVotes}
             title={roomState.round.title}
             onSetTitle={setTitle}
             onReveal={reveal}
+            onNewRound={newRound}
           />
         </div>
       )}
@@ -137,6 +142,12 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
           />
         </div>
       )}
+      <div className="mt-6">
+        <HistoryList
+          history={roomState.history}
+          deckType={roomState.room.deckType}
+        />
+      </div>
       <div className="mt-6">
         <ParticipantList
           participants={roomState.participants}

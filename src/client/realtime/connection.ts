@@ -55,6 +55,7 @@ export function createRoomConnection(options: RoomConnectionOptions): {
   setObserver: (participantId: string, observer: boolean) => void;
   setTitle: (title: string) => void;
   reveal: () => void;
+  newRound: () => void;
 } {
   const url = options.url ?? buildWsUrl(options.roomId);
   const socket = (options.createSocket ?? ((u) => new WebSocket(u)))(url);
@@ -129,6 +130,10 @@ export function createRoomConnection(options: RoomConnectionOptions): {
     reveal() {
       if (closed || !opened) return;
       socket.send(JSON.stringify({ type: "reveal" }));
+    },
+    newRound() {
+      if (closed || !opened) return;
+      socket.send(JSON.stringify({ type: "new_round" }));
     },
     join(profile) {
       if (closed) return;

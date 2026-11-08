@@ -6,14 +6,18 @@ export function FacilitatorPanel({
   canReveal,
   missingVotes,
   title,
+  revealed,
   onSetTitle,
   onReveal,
+  onNewRound,
 }: {
+  revealed: boolean;
   canReveal: boolean;
   missingVotes: number;
   title: string | null;
   onSetTitle: (title: string) => void;
   onReveal: () => void;
+  onNewRound: () => void;
 }) {
   const [draft, setDraft] = useState(title ?? "");
   return (
@@ -34,26 +38,35 @@ export function FacilitatorPanel({
             type="text"
             value={draft}
             maxLength={ROUND_TITLE_MAX}
+            disabled={revealed}
             onChange={(event) => setDraft(event.target.value)}
             className="rounded-md border border-slate-300 px-3 py-2 font-normal"
           />
         </label>
         <Button
           type="submit"
-          className="rounded-md border border-slate-300 px-4 py-2 font-medium hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2"
+          disabled={revealed}
+          className="rounded-md border border-slate-300 px-4 py-2 font-medium hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Salvar título
         </Button>
       </form>
       <div className="mt-3 flex items-center gap-3">
         <Button
-          disabled={!canReveal}
+          disabled={revealed || !canReveal}
           onClick={onReveal}
           className="rounded-md bg-blue-800 px-4 py-2 font-medium text-white hover:bg-blue-900 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Revelar cartas
         </Button>
-        {!canReveal && (
+        <Button
+          disabled={!revealed}
+          onClick={onNewRound}
+          className="rounded-md border border-slate-300 px-4 py-2 font-medium hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          Nova rodada
+        </Button>
+        {!revealed && !canReveal && (
           <p role="status" className="text-sm text-slate-700">
             {missingVotes > 0
               ? missingVotes === 1
