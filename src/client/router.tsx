@@ -4,6 +4,7 @@ import {
   createRouter,
   Outlet,
 } from "@tanstack/react-router";
+import { Credits } from "./routes/Credits.tsx";
 import { Home } from "./routes/Home.tsx";
 import { Room } from "./routes/Room.tsx";
 
@@ -26,7 +27,13 @@ const roomRoute = createRoute({
   component: RoomPage,
 });
 
-const routeTree = rootRoute.addChildren([homeRoute, roomRoute]);
+const creditsRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/creditos",
+  component: Credits,
+});
+
+const routeTree = rootRoute.addChildren([homeRoute, roomRoute, creditsRoute]);
 
 export const router = createRouter({ routeTree });
 

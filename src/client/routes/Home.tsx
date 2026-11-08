@@ -1,3 +1,4 @@
+import { CreditsLink } from "./Credits.tsx";
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import type { AvatarId } from "@shared/avatars.ts";
@@ -147,6 +148,7 @@ export function Home() {
           Criar sala
         </button>
       </form>
+      <CreditsLink />
     </main>
   );
 }
