@@ -10,7 +10,7 @@
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test --project=e2e",
+    "test:e2e": "playwright test --project=chromium --project=firefox --project=webkit",
     "test:smoke": "playwright test --project=smoke",
     "deploy": "npm run build && wrangler deploy",
     "lint": "eslint .",

@@ -299,11 +299,11 @@ histórias US01…US11 da spec.
 
 **Purpose**: critérios de sucesso transversais e documentação.
 
-- [ ] T077 [P] Configurar projetos do Playwright em `playwright.config.ts` para Chromium, Firefox e WebKit com viewport de desktop de 1024 × 768 px (largura mínima suportada), e rodar a suíte e2e em todos (SC-004)
-- [ ] T078 [P] Revisão de acessibilidade em `src/client/components/`: navegação por teclado nas cartas e ações do facilitador e contraste AA; registrar o resultado em `tests/e2e/accessibility.spec.ts` com verificações de foco e teclado (SC-005)
-- [ ] T079 Teste e2e de carga de referência em `tests/e2e/ten-participants.spec.ts`: 10 participantes simultâneos concluem votar, revelar e nova rodada sem erro, medindo que um voto aparece para os demais em menos de 500 ms (SC-001, SC-003)
+- [X] T077 [P] Configurar projetos do Playwright em `playwright.config.ts` para Chromium, Firefox e WebKit com viewport de desktop de 1024 × 768 px (largura mínima suportada), e rodar a suíte e2e em todos (SC-004)
+- [X] T078 [P] Revisão de acessibilidade em `src/client/components/`: navegação por teclado nas cartas e ações do facilitador e contraste AA; registrar o resultado em `tests/e2e/accessibility.spec.ts` com verificações de foco e teclado (SC-005)
+- [X] T079 Teste e2e de carga de referência em `tests/e2e/ten-participants.spec.ts`: 10 participantes simultâneos concluem votar, revelar e nova rodada sem erro, medindo que um voto aparece para os demais em menos de 500 ms (SC-001, SC-003)
 - [ ] T080 [P] Criar `README.md` com objetivo, stack, comandos do `quickstart.md`, secrets do deploy (D-03) e links para `specs/001-pokerfe-mvp/`
-- [ ] T081 [P] Revisar todos os textos visíveis da interface em `src/client/` para garantir que estão somente em pt-BR, inclusive mensagens de erro exibidas a partir dos `code` dos contratos — [FR-026]
+- [X] T081 [P] Revisar todos os textos visíveis da interface em `src/client/` para garantir que estão somente em pt-BR, inclusive mensagens de erro exibidas a partir dos `code` dos contratos — [FR-026]
 - [ ] T082 [P] Criar o smoke test em `tests/smoke/deploy.smoke.spec.ts` com as 4 verificações de research R-03: `GET /` responde 200 e exibe a tela inicial; `POST /api/rooms` com `name` "[smoke] verificação de deploy" e `deckType` "points" responde 201 com `roomId` e `facilitatorToken` de 22 caracteres base62; conexão WebSocket nessa sala com `join` de facilitador recebe `room_state` com o nome da sala; conexão com `roomId` válido e inexistente é fechada com 4404; a suíte inteira roda em menos de 1 minuto — [FR-001, FR-003, FR-007, FR-009]
 - [ ] T083 Adicionar ao `.github/workflows/deploy.yml` um passo após o deploy que roda `npm run test:smoke` com `SMOKE_BASE_URL` igual à saída `deployment-url` do `cloudflare/wrangler-action@v4`; falha no smoke test marca o workflow como falho (constitution V); sem reversão automática
 - [ ] T084 Executar o roteiro de `specs/001-pokerfe-mvp/quickstart.md` contra o deploy em `*.workers.dev` (D-02) e registrar a URL de produção no `README.md`

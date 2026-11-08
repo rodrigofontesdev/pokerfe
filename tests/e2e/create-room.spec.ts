@@ -1,9 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test.use({ permissions: ["clipboard-read", "clipboard-write"] });
-
 test("cria a sala e leva o criador à sala como facilitador", async ({
   page,
+  browserName,
 }) => {
   await page.goto("/");
   await page.getByLabel("Nome da sala").fill("Sprint 42 - Checkout");
@@ -21,6 +20,8 @@ test("cria a sala e leva o criador à sala como facilitador", async ({
 
   await page.getByRole("button", { name: "Copiar link" }).click();
   await expect(page.getByText("Link copiado")).toBeVisible();
+  // Só o Chromium permite ler a área de transferência nos testes (permissão no projeto).
+  test.skip(browserName !== "chromium", "leitura da área de transferência");
   const copied = await page.evaluate(() => navigator.clipboard.readText());
   expect(copied).toBe(page.url());
 });

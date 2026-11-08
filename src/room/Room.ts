@@ -117,7 +117,7 @@ export class Room extends DurableObject<Env> {
     }
     const attachment = ws.deserializeAttachment() as Attachment | null;
     if (!attachment && message.type !== "join") {
-      return this.sendError(ws, "not_joined", "Envie join primeiro");
+      return this.sendError(ws, "not_joined", "Entre na sala primeiro");
     }
     if (message.type === "join") {
       return this.handleJoin(ws, message);
