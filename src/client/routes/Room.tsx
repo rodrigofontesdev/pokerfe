@@ -1,3 +1,4 @@
+import { CreditsLink } from "./Credits.tsx";
 import { useState } from "react";
 import { isValidId } from "@shared/ids.ts";
 import { JoinForm } from "@client/components/JoinForm.tsx";
@@ -163,6 +164,7 @@ function ConnectedRoom({ roomId }: { roomId: string }) {
           onSetObserver={setObserver}
         />
       </div>
+      <CreditsLink />
     </main>
   );
 }
