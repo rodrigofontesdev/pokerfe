@@ -57,6 +57,11 @@ snapshot estão na seção Clarifications e prevalecem sobre ele (por exemplo, D
 - Q: Quais dispositivos a interface deve atender? → A: Apenas desktop e notebook, com largura
   mínima de 1024 px; tablet e celular ficam fora do escopo.
 
+### Session 2026-11-07
+
+- Q: O que exibir quando a rodada não tem título? → A: "Rodada N" (N é o número da rodada), tanto
+  na rodada em andamento quanto no histórico; antes o fallback só estava previsto no histórico.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - US01 Criar sala (Priority: P1)
@@ -220,6 +225,8 @@ Como PO, quero dar um título à rodada, para associar a estimativa à feature.
 
 1. **Dado que** o PO preencheu o título "Login com Google", **Quando** as cartas são reveladas,
    **Então** a estimativa fica associada à feature "Login com Google".
+2. **Dado que** o PO não informou título para a rodada 3, **Então** a rodada em andamento é
+   exibida para todos como "Rodada 3".
 
 ---
 
@@ -354,7 +361,8 @@ expirada e ver a mensagem.
 **Rodadas e histórico**
 
 - **FR-017**: O facilitador DEVE poder informar um título opcional para a rodada; ao revelar, a
-  estimativa fica associada a esse título. [US08]
+  estimativa fica associada a esse título. Rodada sem título é exibida como "Rodada N" (N é o
+  número da rodada), para todos os participantes. [US08]
 - **FR-018**: A ação "Nova rodada" DEVE ficar disponível somente após a revelação; ela arquiva a
   rodada revelada no histórico e abre uma nova rodada com todos os votos zerados. [US09]
 - **FR-019**: O histórico DEVE listar as rodadas arquivadas da mais recente para a mais antiga,
