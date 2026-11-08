@@ -8,6 +8,8 @@ const e2e = { testDir: "tests/e2e" };
 const baseURL = "http://localhost:5173";
 
 export default defineConfig({
+  // Runners do CI são lentos, sobretudo no Firefox com o Durable Object a frio.
+  expect: { timeout: process.env.CI ? 15_000 : 5_000 },
   projects: [
     {
       name: "chromium",
