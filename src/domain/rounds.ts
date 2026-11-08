@@ -34,7 +34,6 @@ export function newRound(input: {
   return { ok: true, archivedRound: currentRound, nextRound: currentRound + 1 };
 }
 
-/** Rodadas arquivadas, da mais recente para a mais antiga. */
 export function sortHistory<T extends { number: number }>(
   archived: readonly T[],
 ): T[] {

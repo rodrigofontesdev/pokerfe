@@ -30,7 +30,7 @@ const vote = (page: Page, card: string) =>
 const newRoundButton = (page: Page) =>
   page.getByRole("button", { name: "Nova rodada" });
 
-test("cenário 1: rodada com título vai ao histórico para todos e a nova começa zerada", async ({
+test("rodada com título vai ao histórico para todos e a nova começa zerada", async ({
   browser,
 }) => {
   const { page: fac, url } = await createRoom(browser);
@@ -56,7 +56,7 @@ test("cenário 1: rodada com título vai ao histórico para todos e a nova come�
   }
 });
 
-test('cenário 2: rodada sem título aparece como "Rodada N" no histórico', async ({
+test('rodada sem título aparece como "Rodada N" no histórico', async ({
   browser,
 }) => {
   const { page: fac, url } = await createRoom(browser);
@@ -79,7 +79,7 @@ test('cenário 2: rodada sem título aparece como "Rodada N" no histórico', asy
   await expect(items.nth(2)).toContainText("Rodada 1");
 });
 
-test('cenário 3: sem revelação o botão "Nova rodada" fica desabilitado', async ({
+test('sem revelação o botão "Nova rodada" fica desabilitado', async ({
   browser,
 }) => {
   const { page: fac, url } = await createRoom(browser);
